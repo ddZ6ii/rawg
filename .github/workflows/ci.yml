@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-environment
+
+      - name: Format code
+        run: pnpm run format:check
+
+      - name: Lint code
+        run: pnpm run lint
+
+  test:
+    needs: code-quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-environment
+
+      - name: Run tests
+        run: pnpm run test
