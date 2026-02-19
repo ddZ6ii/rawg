@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: dev
+    ports:
+      - '5173:5173'
+    volumes:
+      - /app/node_modules
+      - ./src:/app/src/
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./index.html:/app/index.html
+      - ./public/:/app/public/
