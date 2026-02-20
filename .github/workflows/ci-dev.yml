@@ -6,35 +6,10 @@ on:
       - dev
 
 jobs:
-  code-quality:
+  get-short-sha:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - uses: ./.github/actions/setup-environment
-
-      - name: Format code
-        run: pnpm run format:check
-
-      - name: Lint code
-        run: pnpm run lint
-
-  test:
-    needs: code-quality
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - uses: ./.github/actions/setup-environment
-
-      - name: Run tests
-        run: pnpm run test
-
-  build-and-publish:
-    needs: test
-    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.short-sha.outputs.sha }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -43,9 +18,11 @@ jobs:
         id: short-sha
         run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - uses: ./.github/actions/build-push-docker
-        with:
-          docker-username: ${{ vars.DOCKERHUB_USERNAME }}
-          docker-repository: ${{ vars.DOCKERHUB_REPO }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          image-tag: dev-${{ steps.short-sha.outputs.sha }}
+  ci-staging:
+    # Reusable workflows are not called with uses inside a job's steps — they are called at the job level directly!
+    needs: get-short-sha
+    uses: ./.github/workflows/ci-shared.yml
+    with:
+      image-tag: dev-${{ needs.get-short-sha.outputs.sha }}
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
