@@ -16,6 +16,7 @@ dist-ssr
 # MD files
 *.md
 !README.md
+!CHANGELOG.md
 
 # Editor directories and files
 .vscode/*

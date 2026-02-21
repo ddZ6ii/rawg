@@ -25,7 +25,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-environment
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Format code
         run: pnpm run format:check
@@ -40,7 +41,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - uses: ./.github/actions/setup-environment
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
       - name: Run tests
         run: pnpm run test
