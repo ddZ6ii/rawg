@@ -1,0 +1,28 @@
+name: ci-semantic-release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Run Semantic Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required: semantic-release needs full git history
+          persist-credentials: false # Required: use GH_TOKEN for push, not GITHUB_TOKEN
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Run Semantic Release
+        run: pnpm exec semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
