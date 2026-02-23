@@ -13,7 +13,7 @@ jobs:
     name: Run Semantic Release
     runs-on: ubuntu-latest
     env:
-      HUSKY: "0" # Disable husky hooks in CI
+      HUSKY: '0' # Disable husky hooks in CI
     steps:
       - name: Check out code
         uses: actions/checkout@v4
