@@ -1,4 +1,4 @@
-name: ci-dev
+name: publish-staging
 
 on:
   push:
@@ -18,10 +18,12 @@ jobs:
         id: short-sha
         run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-  ci-staging:
-    # Reusable workflows are not called with uses inside a job's steps — they are called at the job level directly!
-    needs: get-short-sha
-    uses: ./.github/workflows/ci-shared.yml
+  code-quality:
+    uses: ./.github/workflows/shared-quality.yml
+
+  publish-staging:
+    needs: [code-quality, get-short-sha]
+    uses: ./.github/workflows/shared-docker.yml
     with:
       image-tag: dev-${{ needs.get-short-sha.outputs.sha }}
     secrets:

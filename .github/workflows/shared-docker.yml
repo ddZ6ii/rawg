@@ -1,7 +1,8 @@
-name: ci-shared
+# Reusable workflow for building and pushing Docker images
+name: shared-docker
 
 on:
-  workflow_call: # 👈 makes the workflow reusable and allows it to be called from other workflows (e.g., ci-dev.yml and ci-main.yml)
+  workflow_call: # 👈 makes the workflow reusable and allows it to be called from other workflows
     inputs:
       image-tag:
         description: 'Docker image tag'
@@ -19,36 +20,7 @@ on:
         required: true
 
 jobs:
-  code-quality:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Format code
-        run: pnpm run format:check
-
-      - name: Lint code
-        run: pnpm run lint
-
-  test:
-    needs: code-quality
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Run tests
-        run: pnpm run test
-
   build-and-publish:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Check out code

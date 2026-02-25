@@ -1,4 +1,4 @@
-name: ci-main
+name: publish-production
 
 on:
   push:
@@ -6,8 +6,12 @@ on:
       - 'v*.*.*'
 
 jobs:
-  ci-production:
-    uses: ./.github/workflows/ci-shared.yml
+  code-quality:
+    uses: ./.github/workflows/shared-quality.yml
+
+  publish-production:
+    needs: [code-quality]
+    uses: ./.github/workflows/shared-docker.yml
     with:
       image-tag: ${{ github.ref_name }} # 👈 ${{ github.ref_name }} allows to retrieve the tag version and use it as Docker tag
       push-latest: 'true'
