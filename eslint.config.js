@@ -60,5 +60,11 @@ export default defineConfig([
         },
       ],
     },
+    settings: {
+      react: {
+        version: 'detect',
+        defaultVersion: '19',
+      },
+    },
   },
 ])
