@@ -1,0 +1,14 @@
+# Trivy ignore file — accepted CVE exceptions
+#
+# Use this file to allowlist CVEs that have no available fix and whose risk has been consciously accepted.
+# Each entry must be accompanied by a PR comment explaining:
+#   - Which CVE is being accepted and what it is
+#   - Why no fix is currently available
+#   - Whether the vulnerable code path is reachable in production
+#   - A plan to remove the entry once a fix is released
+#
+# Format:
+#   # CVE-YYYY-XXXXX — <package> — <reason>
+#   # No fix available as of <date>. <exploitability note>.
+#   # Remove when: <condition>
+#   CVE-YYYY-XXXXX
