@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment
@@ -25,6 +27,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment
@@ -37,6 +41,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment
@@ -44,12 +50,28 @@ jobs:
       - name: Audit dependencies
         run: pnpm dlx audit-ci --config .audit-ci.json
 
-  test:
-    needs: [code-quality, check-licences, audit-deps]
+  audit-actions:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Audit GitHub Actions security
+        uses: zizmorcore/zizmor-action@v0.5.0
+        with:
+          config: zizmor.yml
+          advanced-security: false # output to CI logs only — security-events: write not granted
+
+  test:
+    needs: [code-quality, check-licences, audit-deps, audit-actions]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment

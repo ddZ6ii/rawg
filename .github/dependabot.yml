@@ -19,3 +19,35 @@ updates:
         patterns:
           - '*'
         dependency-type: 'development'
+
+  # Enable version updates for Docker base images (node, nginx)
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    rebase-strategy: 'auto'
+    security-updates-only: true
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    groups:
+      docker-base-images: # group all base image security fixes into a single PR
+        patterns:
+          - '*'
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    rebase-strategy: 'auto'
+    security-updates-only: true
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    groups:
+      github-actions: # group all action security fixes into a single PR
+        patterns:
+          - '*'

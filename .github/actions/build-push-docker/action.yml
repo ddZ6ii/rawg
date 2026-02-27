@@ -42,16 +42,16 @@ runs:
     - name: Scan Docker image for vulnerabilities
       uses: aquasecurity/trivy-action@0.29.0
       with:
-        image-ref: '${{ inputs.docker-repository }}:${{ inputs.image-tag }}'
+        image-ref: '${{ inputs.docker-repository }}:${{ inputs.image-tag }}' # the locally loaded image
         format: table
-        exit-code: '1'
-        ignore-unfixed: true
+        exit-code: '1' # fail the pipeline on HIGH/CRITICAL findings
+        ignore-unfixed: true # skip CVEs with no available fix
         severity: 'HIGH,CRITICAL'
         output: trivy-results.txt
 
     # Always upload results to the job summary, even when the scan step fails.
     - name: Upload scan results to job summary
-      if: always()
+      if: always() # show results even if scan step fails
       shell: bash
       run: cat trivy-results.txt >> $GITHUB_STEP_SUMMARY
 

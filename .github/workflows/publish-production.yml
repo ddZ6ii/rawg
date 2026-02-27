@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: read
+
 jobs:
   code-quality:
     uses: ./.github/workflows/shared-quality.yml
