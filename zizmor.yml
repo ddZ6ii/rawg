@@ -1,0 +1,23 @@
+rules:
+  # SHA pinning is intentionally not enforced — Dependabot tracks GitHub Actions
+  # version updates and opens security PRs when CVEs are found, which is the
+  # accepted mitigation for tag-based pinning.
+  #
+  # What zizmor would require:
+  #   uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+  # What we use instead:
+  #   uses: actions/checkout@v4
+  unpinned-uses:
+    disable: true
+
+  # dependabot-cooldown is redundant here — all ecosystems use `security-updates-only: true` # (see `dependabot.yml` file), which already limits PRs to known CVEs and mitigates the
+  # supply-chain timing attack vector.
+  dependabot-cooldown:
+    disable: true
+
+  # The sync-dev job in semantic-release.yml intentionally uses token: GH_TOKEN
+  # without persist-credentials: false — it needs to git push after rebase.
+  # This is a known, accepted pattern for that specific job.
+  artipacked:
+    ignore:
+      - semantic-release.yml

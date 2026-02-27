@@ -5,6 +5,9 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: read
+
 jobs:
   get-short-sha:
     runs-on: ubuntu-latest
@@ -13,6 +16,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Get short SHA
         id: short-sha
