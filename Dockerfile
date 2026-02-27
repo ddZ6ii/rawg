@@ -34,7 +34,10 @@ COPY src src
 RUN pnpm run build
 
 # Stage 4: serve (production)
-FROM nginx:1.27-alpine AS prod
+FROM nginx:1.28.2-alpine AS prod
+
+# Upgrade all Alpine packages to their latest patched versions to fix OS-level CVEs.
+RUN apk upgrade --no-cache
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
