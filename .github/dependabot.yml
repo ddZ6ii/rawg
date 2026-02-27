@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Enable version updates for npm (and pnpm)
+  - package-ecosystem: 'npm' # Dependabot uses the npm ecosystem for pnpm projects
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    rebase-strategy: 'auto' # keeps PR branch rebased onto base branch — no merge commits
+    security-updates-only: true # only open PRs for known CVEs — routine bumps handled manually
+    allow:
+      - dependency-type: 'direct' # only update direct deps; transitive vulns fixed via their direct parent
+    commit-message:
+      prefix: 'chore' # prod deps  → chore(deps): bump x from a to b
+      prefix-development: 'chore' # dev deps   → chore(deps-dev): bump x from a to b
+      include: 'scope' # adds (deps) or (deps-dev) scope automatically
+    groups:
+      dev-dependencies: # group all dev dep security fixes into a single PR
+        patterns:
+          - '*'
+        dependency-type: 'development'

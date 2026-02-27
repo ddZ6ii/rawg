@@ -1,0 +1,6 @@
+{
+  "high": true,
+  "allowlist": [],
+  "package-manager": "pnpm",
+  "extra-args": ["--prod"]
+}
