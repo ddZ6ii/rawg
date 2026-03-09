@@ -31,5 +31,7 @@ jobs:
     uses: ./.github/workflows/shared-docker.yml
     with:
       image-tag: dev-${{ needs.get-short-sha.outputs.sha }}
+      version: dev-${{ needs.get-short-sha.outputs.sha }}
+      revision: ${{ github.sha }}
     secrets:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

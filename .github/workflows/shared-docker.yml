@@ -13,6 +13,16 @@ on:
         required: false
         type: string
         default: 'false'
+      version:
+        description: 'Image version label (org.opencontainers.image.version)'
+        required: false
+        type: string
+        default: 'unknown'
+      revision:
+        description: 'Git commit SHA (org.opencontainers.image.revision)'
+        required: false
+        type: string
+        default: 'unknown'
     # 👇 Secrets are scoped to the workflow that owns them and are not automatically inherited by reusable workflows to have full visibility and control over what sensitive data is being passed around (GitHub Actions security design decision). Thus it must be explicitly passed from the caller workflow.
     secrets:
       DOCKERHUB_TOKEN:
@@ -36,3 +46,5 @@ jobs:
           docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
           image-tag: ${{ inputs.image-tag }}
           push-latest: ${{ inputs.push-latest }}
+          version: ${{ inputs.version }}
+          revision: ${{ inputs.revision }}

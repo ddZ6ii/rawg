@@ -18,5 +18,7 @@ jobs:
     with:
       image-tag: ${{ github.ref_name }} # 👈 ${{ github.ref_name }} allows to retrieve the tag version and use it as Docker tag
       push-latest: 'true'
+      version: ${{ github.ref_name }}
+      revision: ${{ github.sha }}
     secrets:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
