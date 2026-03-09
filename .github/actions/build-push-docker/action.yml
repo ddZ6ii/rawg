@@ -18,10 +18,29 @@ inputs:
     description: 'Whether to also tag the image as latest'
     required: false
     default: 'false'
+  version:
+    description: 'Image version label (org.opencontainers.image.version)'
+    required: false
+    default: 'unknown'
+  revision:
+    description: 'Git commit SHA (org.opencontainers.image.revision)'
+    required: false
+    default: 'unknown'
 
 runs:
   using: 'composite'
   steps:
+    # Sanitize inputs through env vars before passing to build-args to prevent injection via crafted values.
+    - name: Prepare build metadata
+      id: meta
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        REVISION: ${{ inputs.revision }}
+      run: |
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "revision=${REVISION}" >> $GITHUB_OUTPUT
+
     # Enable multi-platform builds within Docker workflows by installing QEMU static binaries.
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -38,6 +57,9 @@ runs:
         load: true
         context: '{{defaultContext}}'
         tags: ${{ inputs.docker-repository }}:${{ inputs.image-tag }}
+        build-args: |
+          VERSION=${{ steps.meta.outputs.version }}
+          REVISION=${{ steps.meta.outputs.revision }}
 
     - name: Scan Docker image for vulnerabilities
       uses: aquasecurity/trivy-action@0.29.0
@@ -71,3 +93,6 @@ runs:
         tags: |
           ${{ inputs.docker-repository }}:${{ inputs.image-tag }}
           ${{ inputs.push-latest == 'true' && format('{0}:latest', inputs.docker-repository) || '' }}
+        build-args: |
+          VERSION=${{ steps.meta.outputs.version }}
+          REVISION=${{ steps.meta.outputs.revision }}
