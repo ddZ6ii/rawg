@@ -2,6 +2,12 @@
 
 # ⚠️ This script is intended to be run on your local machine to check the health of the webhook endpoint. It is not meant to be run on the server!
 
+# Load secrets from .env file in the same directory as this script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  source "$SCRIPT_DIR/.env"
+fi
+
 SECRET="${WEBHOOK_DEBUG_SECRET:?WEBHOOK_DEBUG_SECRET env var not set}"
 # An empty JSON object is used as payload — HMAC must sign something,
 # and {} is explicit about the intent (no payload needed for a health check)
@@ -11,7 +17,7 @@ SIG=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print "s
 echo "=== Webhook Health Check ==="
 
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -X POST https://hooks.yourdomain.com/hooks/health-check \
+  -X POST https://hooks.ddz6ii.io/hooks/health-check \
   -H "Content-Type: application/json" \
   -H "X-Signature: $SIG" \
   -d "$PAYLOAD")
