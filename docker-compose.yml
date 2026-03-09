@@ -6,8 +6,5 @@ services:
     ports:
       - '5173:5173'
     volumes:
-      - /app/node_modules
-      - ./src:/app/src/
-      - ./vite.config.ts:/app/vite.config.ts
-      - ./index.html:/app/index.html
-      - ./public/:/app/public/
+      - .:/app # bind mount the whole project — live code changes
+      - /app/node_modules # anonymous volume (container only) — keeps container's node_modules
