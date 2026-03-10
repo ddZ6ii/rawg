@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # allows manual triggering of the workflow from the GitHub Actions UI
 
 permissions:
-  contents: write
+  contents: read # restricts GITHUB_TOKEN permissions only, not for the PAT GH_TOKEN used in the release step (write scope defined in GitHub)
 
 jobs:
   release:

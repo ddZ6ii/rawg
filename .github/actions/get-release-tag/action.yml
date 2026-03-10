@@ -1,0 +1,53 @@
+name: 'Get release tag'
+description: >
+  Checks whether semantic-release published a new release during the current
+  workflow_run. Outputs the tag and commit SHA if a new release is found,
+  or empty strings if the run was a no-op.
+
+inputs:
+  repository:
+    description: 'The GitHub repository (owner/repo)'
+    required: true
+  workflow-created-at:
+    description: 'The workflow_run.created_at timestamp to compare against'
+    required: true
+
+outputs:
+  tag:
+    description: 'The new release tag (e.g. v0.2.0), or empty if no new release'
+    value: ${{ steps.get-tag.outputs.tag }}
+  sha:
+    description: 'The commit SHA the tag points to, or empty if no new release'
+    value: ${{ steps.get-tag.outputs.sha }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get release tag if new release was published
+      id: get-tag
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        RELEASE=$(gh api repos/${{ inputs.repository }}/releases/latest 2>/dev/null || echo '{}')
+        TAG=$(echo "$RELEASE" | jq -r '.tag_name // empty')
+        PUBLISHED_AT=$(echo "$RELEASE" | jq -r '.published_at // empty')
+        WORKFLOW_CREATED="${{ inputs.workflow-created-at }}"
+
+        # Only proceed if the latest release was published after this workflow_run started
+        if [ -n "$TAG" ] && [[ "$PUBLISHED_AT" > "$WORKFLOW_CREATED" ]]; then
+          # Resolve the commit SHA the tag points to (handles both lightweight and annotated tags)
+          REF=$(gh api "repos/${{ inputs.repository }}/git/ref/tags/${TAG}")
+          OBJ_TYPE=$(echo "$REF" | jq -r '.object.type')
+          OBJ_SHA=$(echo "$REF" | jq -r '.object.sha')
+          if [ "$OBJ_TYPE" = "tag" ]; then
+            SHA=$(gh api "repos/${{ inputs.repository }}/git/tags/${OBJ_SHA}" --jq '.object.sha')
+          else
+            SHA="$OBJ_SHA"
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "sha=${SHA}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=" >> $GITHUB_OUTPUT
+          echo "sha=" >> $GITHUB_OUTPUT
+        fi

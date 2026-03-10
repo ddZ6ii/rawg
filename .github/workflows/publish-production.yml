@@ -1,24 +1,47 @@
 name: publish-production
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  workflow_run:
+    workflows: ['semantic-release']
+    types: [completed]
 
 permissions:
   contents: read
 
 jobs:
+  # Detect whether semantic-release actually published a new release in this run.
+  # If it ran as a no-op (no release-worthy commits), skip all downstream jobs.
+  get-release-tag:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      tag: ${{ steps.get-tag.outputs.tag }}
+      sha: ${{ steps.get-tag.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get release tag if new release was published
+        id: get-tag
+        uses: ./.github/actions/get-release-tag
+        with:
+          repository: ${{ github.repository }}
+          workflow-created-at: ${{ github.event.workflow_run.created_at }}
+
+  # Job is skipped if tag is empty (no new release was published in this workflow_run).
   code-quality:
+    needs: get-release-tag
+    if: ${{ needs.get-release-tag.outputs.tag != '' }}
     uses: ./.github/workflows/shared-quality.yml
 
+  # Job is skipped if tag is empty or if code-quality fails.
   publish-production:
-    needs: [code-quality]
+    needs: [get-release-tag, code-quality]
     uses: ./.github/workflows/shared-docker.yml
     with:
-      image-tag: ${{ github.ref_name }} # 👈 ${{ github.ref_name }} allows to retrieve the tag version and use it as Docker tag
+      image-tag: ${{ needs.get-release-tag.outputs.tag }}
       push-latest: 'true'
-      version: ${{ github.ref_name }}
-      revision: ${{ github.sha }}
+      version: ${{ needs.get-release-tag.outputs.tag }}
+      revision: ${{ needs.get-release-tag.outputs.sha }}
     secrets:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
