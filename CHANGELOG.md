@@ -1,3 +1,9 @@
+## [0.1.7](https://github.com/ddZ6ii/rawg/compare/v0.1.6...v0.1.7) (2026-03-10)
+
+### Bug Fixes
+
+* **ci:** fix script injection in get-release-tag action and ignore CHANGELOG.md from prettier ([6421f2b](https://github.com/ddZ6ii/rawg/commit/6421f2bd3a9310749ae693c6e3b5c44648ac67e0))
+
 ## [0.1.6](https://github.com/ddZ6ii/rawg/compare/v0.1.5...v0.1.6) (2026-03-10)
 
 ### Bug Fixes
