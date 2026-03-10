@@ -21,3 +21,14 @@ rules:
   artipacked:
     ignore:
       - semantic-release.yml
+
+  # publish-production.yml uses workflow_run because the semantic-release commit
+  # contains [skip ci], which causes GitHub to skip all push event workflows for
+  # the version tag. workflow_run is the only viable trigger in this setup.
+  #
+  # The risk is mitigated:
+  #   - semantic-release.yml only runs on push to main (not triggerable from forks)
+  #   - get-release-tag job guards on head_branch == 'main' before accessing secrets
+  dangerous-triggers:
+    ignore:
+      - publish-production.yml
