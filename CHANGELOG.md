@@ -1,3 +1,9 @@
+## [0.1.6](https://github.com/ddZ6ii/rawg/compare/v0.1.5...v0.1.6) (2026-03-10)
+
+### Bug Fixes
+
+* **ci:** switch publish-production trigger from tag push to workflow_run ([9a0fbb9](https://github.com/ddZ6ii/rawg/commit/9a0fbb9675dae426ee03361a4141a86d9cdd3008))
+
 ## [0.1.5](https://github.com/ddZ6ii/rawg/compare/v0.1.4...v0.1.5) (2026-03-10)
 
 ### Bug Fixes
