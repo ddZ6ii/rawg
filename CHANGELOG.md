@@ -1,3 +1,9 @@
+## [0.1.8](https://github.com/ddZ6ii/rawg/compare/v0.1.7...v0.1.8) (2026-03-10)
+
+### Bug Fixes
+
+* **ci:** harden publish-production against workflow_run security risks ([3be9afe](https://github.com/ddZ6ii/rawg/commit/3be9afe85d7e5ee8bbd667dd79977445e4364563))
+
 ## [0.1.7](https://github.com/ddZ6ii/rawg/compare/v0.1.6...v0.1.7) (2026-03-10)
 
 ### Bug Fixes
