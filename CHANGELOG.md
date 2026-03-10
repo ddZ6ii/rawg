@@ -1,3 +1,9 @@
+## [0.1.5](https://github.com/ddZ6ii/rawg/compare/v0.1.4...v0.1.5) (2026-03-10)
+
+### Bug Fixes
+
+* **ci:** restore write permissions to unblock production release trigger ([1509e13](https://github.com/ddZ6ii/rawg/commit/1509e1371a93432385fb55af3c0b0dd3648d5ace))
+
 ## [0.1.4](https://github.com/ddZ6ii/rawg/compare/v0.1.3...v0.1.4) (2026-03-10)
 
 ## [0.1.3](https://github.com/ddZ6ii/rawg/compare/v0.1.2...v0.1.3) (2026-02-25)
