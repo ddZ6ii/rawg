@@ -28,20 +28,21 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
+        REPOSITORY: ${{ inputs.repository }}
+        WORKFLOW_CREATED_AT: ${{ inputs.workflow-created-at }}
       run: |
-        RELEASE=$(gh api repos/${{ inputs.repository }}/releases/latest 2>/dev/null || echo '{}')
+        RELEASE=$(gh api "repos/$REPOSITORY/releases/latest" 2>/dev/null || echo '{}')
         TAG=$(echo "$RELEASE" | jq -r '.tag_name // empty')
         PUBLISHED_AT=$(echo "$RELEASE" | jq -r '.published_at // empty')
-        WORKFLOW_CREATED="${{ inputs.workflow-created-at }}"
 
         # Only proceed if the latest release was published after this workflow_run started
-        if [ -n "$TAG" ] && [[ "$PUBLISHED_AT" > "$WORKFLOW_CREATED" ]]; then
+        if [ -n "$TAG" ] && [[ "$PUBLISHED_AT" > "$WORKFLOW_CREATED_AT" ]]; then
           # Resolve the commit SHA the tag points to (handles both lightweight and annotated tags)
-          REF=$(gh api "repos/${{ inputs.repository }}/git/ref/tags/${TAG}")
+          REF=$(gh api "repos/$REPOSITORY/git/ref/tags/${TAG}")
           OBJ_TYPE=$(echo "$REF" | jq -r '.object.type')
           OBJ_SHA=$(echo "$REF" | jq -r '.object.sha')
           if [ "$OBJ_TYPE" = "tag" ]; then
-            SHA=$(gh api "repos/${{ inputs.repository }}/git/tags/${OBJ_SHA}" --jq '.object.sha')
+            SHA=$(gh api "repos/$REPOSITORY/git/tags/${OBJ_SHA}" --jq '.object.sha')
           else
             SHA="$OBJ_SHA"
           fi
