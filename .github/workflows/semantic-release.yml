@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # allows manual triggering of the workflow from the GitHub Actions UI
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   release:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required: semantic-release needs full git history
-          persist-credentials: false # Required: use GH_TOKEN for push, not GITHUB_TOKEN
+          persist-credentials: false # Required: use GH_TOKEN (PAT) for push instead of GITHUB_TOKEN
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment
