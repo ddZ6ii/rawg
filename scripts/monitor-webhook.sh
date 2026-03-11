@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # ⚠️ This script is intended to be run on your local machine to check the health of the webhook endpoint. It is not meant to be run on the server!
 
 # Load secrets from .env file in the same directory as this script

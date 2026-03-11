@@ -1,6 +1,8 @@
 #!/bin/bash
+# ⚠️ This script is intended to be run on your local machine to trigger a production deployment. 
 # Usage: ./deploy-prod.sh <app-name> <semver-tag>
 # Example: ./deploy-prod.sh app1 v1.2.3
+
 set -e
 
 # Load secrets from .env file in the same directory as this script
