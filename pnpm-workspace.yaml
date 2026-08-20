@@ -8,3 +8,11 @@ overrides:
   minimatch@>=9.0.0 <9.0.7: '>=9.0.7'
   rollup@>=4.0.0 <4.59.0: '>=4.59.0'
   tmp@<=0.2.3: '>=0.2.4'
+  '@eslint/eslintrc>ajv': ^6.12.4
+  postcss: ^8.5.18
+  nanoid: ^3.3.18
+  picomatch@>=4.0.0 <4.0.4: ^4.0.4
+
+# Mitigate supply chain attacks
+minimumReleaseAge: '4320' # 3 days (in minutes)
+ignore-scripts: 'true'

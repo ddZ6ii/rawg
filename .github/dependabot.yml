@@ -1,53 +1,72 @@
+# Dependabot configuration.
+#
+# IMPORTANT: there is no "security-updates-only" key in the dependabot.yml
+# schema (verified against GitHub's current docs — see task-3-report.md for
+# sources). Dependabot has two independent features:
+#   - "Dependabot version updates": scheduled, config-driven PRs, controlled
+#     entirely by this file.
+#   - "Dependabot security updates": automatic PRs for known CVEs, toggled
+#     in repo Settings > Security, and NOT configured by this file's presence
+#     or absence. It must be enabled there for any of this to matter — see
+#     the manual follow-up steps in task-3-report.md.
+#
+# To get "PRs only for security fixes, not routine bumps" for an ecosystem,
+# GitHub's documented mechanism is `open-pull-requests-limit: 0`: this caps
+# routine *version-update* PRs at zero, while security-update PRs use a
+# separate internal quota and keep flowing. That's applied below to npm and
+# docker per this plan's constraints. github-actions is deliberately left at
+# the default limit (routine weekly Actions bumps stay on) — see rationale
+# below.
 version: 2
 updates:
-  # Enable version updates for npm (and pnpm)
-  - package-ecosystem: 'npm' # Dependabot uses the npm ecosystem for pnpm projects
-    directory: '/'
+  - package-ecosystem: 'npm' # also covers pnpm, since it reads pnpm-lock.yaml
+    directory: '/' # single root entry: no pnpm workspace packages to enumerate
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
-    rebase-strategy: 'auto' # keeps PR branch rebased onto base branch — no merge commits
-    security-updates-only: true # only open PRs for known CVEs — routine bumps handled manually
-    allow:
-      - dependency-type: 'direct' # only update direct deps; transitive vulns fixed via their direct parent
-    commit-message:
-      prefix: 'chore' # prod deps  → chore(deps): bump x from a to b
-      prefix-development: 'chore' # dev deps   → chore(deps-dev): bump x from a to b
-      include: 'scope' # adds (deps) or (deps-dev) scope automatically
+    open-pull-requests-limit: 0 # security-updates-only behavior (see header)
     groups:
-      dev-dependencies: # group all dev dep security fixes into a single PR
+      security-updates:
+        applies-to: security-updates
         patterns:
           - '*'
-        dependency-type: 'development'
+    rebase-strategy: 'auto'
+    commit-message:
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
 
-  # Enable version updates for Docker base images (node, nginx)
   - package-ecosystem: 'docker'
     directory: '/'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0 # security-updates-only behavior (see header)
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - '*'
     rebase-strategy: 'auto'
-    security-updates-only: true
     commit-message:
       prefix: 'chore'
       include: 'scope'
-    groups:
-      docker-base-images: # group all base image security fixes into a single PR
-        patterns:
-          - '*'
 
-  # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
+    # No open-pull-requests-limit override here: unlike npm/docker, this
+    # plan does not restrict github-actions to security-only, so routine
+    # weekly Actions version bumps stay enabled at the default limit (5).
+    # Dependabot security updates ARE supported for github-actions (GitHub
+    # added this Nov 2022) and work automatically via the repo-settings
+    # toggle regardless of this file — the grouping below just keeps any
+    # security-update PRs consolidated into one, same as the other ecosystems.
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - '*'
     rebase-strategy: 'auto'
-    security-updates-only: true
     commit-message:
       prefix: 'chore'
       include: 'scope'
-    groups:
-      github-actions: # group all action security fixes into a single PR
-        patterns:
-          - '*'
