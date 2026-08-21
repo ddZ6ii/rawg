@@ -8,8 +8,15 @@ while IFS=' ' read -r local_ref local_sha remote_ref remote_sha; do
   case "$local_ref" in refs/heads/*) ;; *) continue ;; esac
 
   if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
-    # New branch: validate only commits since diverging from main or dev
-    from=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD origin/dev 2>/dev/null)
+    # New branch: validate only commits since diverging from main or dev.
+    # Pick the nearer of the two merge-bases (dev is preferred when it is
+    # itself ahead of main, i.e. base_main is an ancestor of base_dev).
+    base_main=$(git merge-base "$local_sha" origin/main 2>/dev/null)
+    base_dev=$(git merge-base "$local_sha" origin/dev 2>/dev/null)
+    from="$base_main"
+    if [ -n "$base_dev" ] && { [ -z "$from" ] || git merge-base --is-ancestor "$from" "$base_dev"; }; then
+      from="$base_dev"
+    fi
     [ -z "$from" ] && continue
   else
     from="$remote_sha"

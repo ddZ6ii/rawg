@@ -1,0 +1,63 @@
+name: Staging Deploy
+
+on:
+  push:
+    branches: [dev]
+
+concurrency:
+  group: staging-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  get-short-sha:
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Get short SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+
+  code-quality:
+    uses: ./.github/workflows/ci.yml
+
+  build-and-deploy:
+    needs: [get-short-sha, code-quality]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Build and push Docker image to Docker Hub
+        uses: ./.github/actions/build-push-docker
+        with:
+          docker-username: ${{ vars.DOCKERHUB_USERNAME }}
+          docker-repository: ${{ vars.DOCKERHUB_USERNAME }}/rawg
+          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerfile-path: Dockerfile
+          image-tag: dev-${{ needs.get-short-sha.outputs.sha_short }}
+          version: dev-${{ needs.get-short-sha.outputs.sha_short }}
+          revision: ${{ github.sha }}
+
+      - name: Trigger staging deploy
+        env:
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET_RAWG_STAGING }}
+          HOOKS_BASE_URL: ${{ vars.VPS_HOOKS_BASE_URL }}
+          TAG: dev-${{ needs.get-short-sha.outputs.sha_short }}
+        run: |
+          PAYLOAD="{\"tag\":\"${TAG}\"}"
+          SIG=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print "sha256="$2}')
+          curl -sf -X POST "${HOOKS_BASE_URL}/hooks/deploy-rawg-staging" \
+            -H "Content-Type: application/json" \
+            -H "X-Signature: $SIG" \
+            -d "$PAYLOAD"

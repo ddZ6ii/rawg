@@ -11,13 +11,16 @@ inputs:
   docker-repository:
     description: 'Name of Dockerhub repository'
     required: true
+  dockerfile-path:
+    description: 'Path to Dockerfile'
+    required: true
   image-tag:
     description: 'Docker image tag'
     required: true
-  push-latest:
-    description: 'Whether to also tag the image as latest'
+  latest-tag:
+    description: 'Additional tag to also push (e.g. "frontend-latest"); leave empty to skip'
     required: false
-    default: 'false'
+    default: ''
   version:
     description: 'Image version label (org.opencontainers.image.version)'
     required: false
@@ -38,66 +41,69 @@ runs:
         VERSION: ${{ inputs.version }}
         REVISION: ${{ inputs.revision }}
       run: |
-        echo "version=${VERSION}" >> $GITHUB_OUTPUT
-        echo "revision=${REVISION}" >> $GITHUB_OUTPUT
+        echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        echo "revision=${REVISION}" >> "$GITHUB_OUTPUT"
 
     # Enable multi-platform builds within Docker workflows by installing QEMU static binaries.
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
 
     # Create and boot a builder to be used in the following steps.
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
 
     # Build and load into the runner's local Docker daemon (no push yet) so Trivy can scan it.
     - name: Build Docker image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         push: false
         load: true
         context: '{{defaultContext}}'
+        file: ${{ inputs.dockerfile-path }}
         tags: ${{ inputs.docker-repository }}:${{ inputs.image-tag }}
         build-args: |
           VERSION=${{ steps.meta.outputs.version }}
           REVISION=${{ steps.meta.outputs.revision }}
 
     - name: Scan Docker image for vulnerabilities
-      uses: aquasecurity/trivy-action@0.35.0
+      uses: aquasecurity/trivy-action@v0.36.0
       with:
         image-ref: '${{ inputs.docker-repository }}:${{ inputs.image-tag }}' # the locally loaded image
         format: table
         exit-code: '1' # fail the pipeline on HIGH/CRITICAL findings
         ignore-unfixed: true # skip CVEs with no available fix
         severity: 'HIGH,CRITICAL'
+        scanners: vuln # vulnerability scanning only — secret scanning finds nothing on these images and costs CI time
+        trivyignores: .trivyignore # explicit path, rather than relying on Trivy's implicit cwd-relative default
         output: trivy-results.txt
 
     # Always upload results to the job summary, even when the scan step fails.
     - name: Upload scan results to job summary
-      if: always() # show results even if scan step fails
+      if: '!cancelled()' # show results even if scan step fails, but skip promptly on a cancelled run
       shell: bash
       run: |
         if [ -f trivy-results.txt ]; then
-          cat trivy-results.txt >> $GITHUB_STEP_SUMMARY
+          cat trivy-results.txt >> "$GITHUB_STEP_SUMMARY"
         else
-          echo "trivy-results.txt not found — Trivy may have crashed before scanning." >> $GITHUB_STEP_SUMMARY
+          echo "trivy-results.txt not found — Trivy may have crashed before scanning." >> "$GITHUB_STEP_SUMMARY"
         fi
 
     - name: Login to Docker Hub
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         username: ${{ inputs.docker-username }}
         password: ${{ inputs.docker-token }}
 
-    # Push to Docker Hub only after a clean scan. Buildx reuses cached layers so this is near-instant.
     - name: Push to Docker Hub
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         push: true
         context: '{{defaultContext}}'
+        file: ${{ inputs.dockerfile-path }}
         # ⚠️ The official docker/build-push-action uses the multiline format as its standard for multiple tags, not comma-separated.
         tags: |
           ${{ inputs.docker-repository }}:${{ inputs.image-tag }}
-          ${{ inputs.push-latest == 'true' && format('{0}:latest', inputs.docker-repository) || '' }}
+          ${{ inputs.latest-tag != '' && format('{0}:{1}', inputs.docker-repository, inputs.latest-tag) || '' }}
         build-args: |
           VERSION=${{ steps.meta.outputs.version }}
           REVISION=${{ steps.meta.outputs.revision }}

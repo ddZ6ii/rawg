@@ -1,15 +1,22 @@
-# Reusable workflow for running code quality checks
-name: shared-quality
+name: CI
 
 on:
+  pull_request:
+  push:
+    branches:
+      - '**'
+      - '!dev'
   workflow_call: # 👈 makes the workflow reusable and allows it to be called from other workflows
+
+permissions:
+  contents: read
 
 jobs:
   code-quality:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -21,6 +28,22 @@ jobs:
 
       - name: Lint code
         run: pnpm run lint
+
+  audit-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Audit GitHub Actions security
+        uses: zizmorcore/zizmor-action@v0.6.2
+        with:
+          version: 1.29.0
+          config: zizmor.yml
+          advanced-security: false # output to CI logs only
+          annotations: true
 
   check-licences:
     runs-on: ubuntu-latest
@@ -50,26 +73,12 @@ jobs:
       - name: Audit dependencies
         run: pnpm dlx audit-ci@7.1.0 --config .audit-ci.json # pin the version explicitly — an unpinned "latest" could silently turn a green branch red on an upstream release
 
-  audit-actions:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-
-      - name: Audit GitHub Actions security
-        uses: zizmorcore/zizmor-action@v0.5.0
-        with:
-          config: zizmor.yml
-          advanced-security: false # output to CI logs only — security-events: write not granted
-
   test:
-    needs: [code-quality, check-licences, audit-deps, audit-actions]
+    needs: [code-quality, audit-actions, check-licences, audit-deps]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -78,3 +87,18 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+
+  build:
+    needs: [code-quality]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Build project
+        run: pnpm run build:docker
