@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
-import App from '../App'
+import App from './app'
 
-describe('App', () => {
+describe('app', () => {
   it('renders the RAWG heading', () => {
     render(<App />)
 
