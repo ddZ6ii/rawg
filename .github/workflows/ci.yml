@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
 
       - name: Audit GitHub Actions security
-        uses: zizmorcore/zizmor-action@v0.6.2
+        uses: zizmorcore/zizmor-action@v0.6.3
         with:
           version: 1.29.0
           config: zizmor.yml
