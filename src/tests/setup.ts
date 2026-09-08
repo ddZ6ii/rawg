@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest'
-import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
+import { afterEach, vi } from 'vitest'
 
 // jsdom doesn't implement window.matchMedia — mock it so UI libraries don't throw
 Object.defineProperty(window, 'matchMedia', {
