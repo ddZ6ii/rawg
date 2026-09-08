@@ -3,12 +3,10 @@ import { describe, it, expect } from 'vitest'
 import App from './app'
 
 describe('app', () => {
-  it('renders the RAWG heading', () => {
+  it('renders the layout regions', () => {
     render(<App />)
 
-    const heading = screen.getByRole('heading', { name: /RAWG/i })
-
-    expect(heading).toBeInTheDocument()
-    expect(heading).toHaveTextContent('RAWG')
+    expect(screen.getByText('Navbar')).toBeInTheDocument()
+    expect(screen.getByText('Main')).toBeInTheDocument()
   })
 })
