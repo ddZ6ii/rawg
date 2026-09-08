@@ -1,4 +1,5 @@
-import { NavBar, SelectTheme } from '@/shared/components'
+import { GameErrorFallback, GameGrid } from '@/features/games/components'
+import { NavBar, SelectTheme, SuspenseQueryBoundary } from '@/shared/components'
 
 export default function App() {
   return (
@@ -7,8 +8,17 @@ export default function App() {
         <NavBar />
         <SelectTheme />
       </header>
+
       <aside className="hidden bg-amber-400 lg:block">Aside</aside>
-      <main className="bg-blue-400">Main</main>
+
+      <main className="h-full bg-blue-400">
+        <SuspenseQueryBoundary
+          fallback={GameErrorFallback}
+          loadingFallback={<div>Loading...</div>}
+        >
+          <GameGrid />
+        </SuspenseQueryBoundary>
+      </main>
     </div>
   )
 }

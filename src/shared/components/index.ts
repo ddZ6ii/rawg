@@ -1,3 +1,5 @@
 export { NavBar } from './navbar'
+export { RootErrorFallback } from './root-error-fallback'
 export { SelectTheme } from './select-theme'
+export { SuspenseQueryBoundary } from './suspense-query-boundary'
 export { WithTooltip } from './with-tooltip'
