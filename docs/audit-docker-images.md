@@ -33,13 +33,13 @@ Docker vulnerability scanning for both staging and production images using Trivy
 
 ## <a id="context"></a>🤔 Context
 
-The CI/CD workflow builds and pushes a single Docker image for **staging** and **production** — rawg is a single-frontend static app, no separate backend/API image. Since both environments are deployed to a real server (VPS), both are live attack surfaces and therefore need **first to be built and scanned prior to being pushed**
+The CI/CD workflow builds and pushes **two** Docker images — `frontend` and `api` (backend) — for both **staging** and **production**. rawg is a frontend + Express backend split behind an nginx gateway (see [VPS setup](https://github.com/ddZ6ii/vps-infra/blob/main/docs/vps-setup.md)'s per-app-gateway pattern): the backend holds the RAWG API key server-side and proxies + caches requests, so the frontend bundle never ships the key. Since both environments are deployed to a real server (VPS), both are live attack surfaces and therefore need **first to be built and scanned prior to being pushed**
 
 > ⚠️ A compromised staging environment can still leak data or be used as a pivot point
 
-Both `staging.yml` and `release.yml` call the same composite action ([`.github/actions/build-push-docker/action.yml`](../.github/actions/build-push-docker/action.yml)) directly. The scan step lives in that single composite action, so it applies to _both_ workflows without touching their callers
+Both `staging.yml` and `release.yml` call the same composite action ([`.github/actions/build-push-docker/action.yml`](../.github/actions/build-push-docker/action.yml)) directly, once per image. The scan step lives in that single composite action, so it applies to _both_ workflows and _both_ images without touching their callers
 
-Staging and production build the **same root [`Dockerfile`](../Dockerfile)** — a multi-stage build (`base` → `dev`/`builder` → `prod`) ending in a `prod` stage on `nginx:1.28.3-alpine-slim`, serving the compiled static assets — just with different tags
+Staging and production build [`frontend/Dockerfile`](../frontend/Dockerfile) (multi-stage: `base` → `builder` → `prod`, ending on `nginx:1.28.3-alpine-slim` serving the compiled static assets) and [`backend/Dockerfile`](../backend/Dockerfile) (multi-stage: `base` → `builder` → `prod`, ending on a slim `node:24-alpine3.22` running the compiled Express app) — just with different tags per environment
 
 ## <a id="updated-pipeline"></a>🔄 Updated Pipeline
 
@@ -165,14 +165,18 @@ Any HIGH or CRITICAL CVE without a `.trivyignore` entry blocks the image from be
 
 ## <a id="local-pre-flight-scan"></a>🔍 Local Pre-Flight Scan
 
-You can assess the Dockerfile's vulnerability baseline **locally**, before pushing — no Trivy installation required:
+You can assess either Dockerfile's vulnerability baseline **locally**, before pushing — no Trivy installation required:
 
 ```sh
-docker build -t rawg:scan-test -f Dockerfile --target prod .
-
+docker build -t rawg-frontend:scan-test -f frontend/Dockerfile --target prod .
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image \
   --db-repository="ghcr.io/aquasecurity/trivy-db:2" \
-  --severity HIGH,CRITICAL --scanners vuln rawg:scan-test
+  --severity HIGH,CRITICAL --scanners vuln rawg-frontend:scan-test
+
+docker build -t rawg-backend:scan-test -f backend/Dockerfile --target prod .
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image \
+  --db-repository="ghcr.io/aquasecurity/trivy-db:2" \
+  --severity HIGH,CRITICAL --scanners vuln rawg-backend:scan-test
 ```
 
 > ℹ️ These commands use the unpinned `aquasec/trivy` (`latest`) Docker image, unlike CI's pinned `aquasecurity/trivy-action@v0.36.0`. This is intentional, not an oversight: local dev wants the freshest scanner and vulnerability DB, while CI wants supply-chain reproducibility from a pinned version — don't "fix" this into a pin
@@ -194,7 +198,9 @@ This builds the image from the local Dockerfile and scans it without pushing any
 
 ## <a id="fixing-vulnerabilities"></a>🧑‍🔧 Fixing Vulnerabilities
 
-rawg's `prod` stage only contains compiled static assets served by nginx — no `node_modules` or lock files. All findings are therefore OS-level packages (Alpine), fixed by upgrading the base image (see [Upgrading OS packages](#upgrading-os-packages))
+`frontend`'s `prod` stage only contains compiled static assets served by nginx — no `node_modules` or lock files. All findings there are therefore OS-level packages (Alpine), fixed by upgrading the base image (see [Upgrading OS packages](#upgrading-os-packages))
+
+`backend`'s `prod` stage is different — it's a running Node process, so its `node_modules` (production dependencies only, via `pnpm install --prod`) is real attack surface Trivy scans too. A finding there is an **npm-level** CVE, not an OS package — fix it the same way `audit-deps`/Dependabot already handle npm CVEs elsewhere in this repo: bump the flagged package (`pnpm update <package>`) or wait for the Dependabot PR, then re-scan. The `apk upgrade`/OS-package flow below only applies to `backend`'s **base** `node:24-alpine3.22` image layer, not its dependencies
 
 ### Strategy
 
@@ -222,7 +228,7 @@ RUN cp /etc/nginx/nginx.conf /tmp/nginx.conf.orig \
 
 > ⚠️ Plain `apk upgrade` does **not** force-upgrade nginx itself — the official image pins an exact `nginx=<version>` in `/etc/apk/world`, so Alpine silently skips it even when a patched version is available in its repos. `apk add --no-cache --upgrade nginx` forces the reinstall
 >
-> Reinstalling the nginx package overwrites Alpine's stock `/etc/nginx/nginx.conf`, which is what carries the `include /etc/nginx/conf.d/*.conf;` directive rawg's own config (`nginx/nginx.conf`, copied to `/etc/nginx/conf.d/default.conf` later in the `prod` stage) depends on to ever get loaded — back it up and restore it around the fix, as shown above
+> Reinstalling the nginx package overwrites Alpine's stock `/etc/nginx/nginx.conf`, which is what carries the `include /etc/nginx/conf.d/*.conf;` directive rawg's own config (`frontend/nginx.conf`, copied to `/etc/nginx/conf.d/default.conf` later in the `prod` stage) depends on to ever get loaded — back it up and restore it around the fix, as shown above
 
 > ℹ️ **Why pin a patched base tag instead of relying on `apk upgrade` alone?** Alpine's apk repo for a given base image tag only carries packages available at that Alpine release — if the tag itself predates a fix (e.g. `nginx:1.28.2-alpine` before `1.28.3` had a patched Alpine package), `apk upgrade`/`apk add --upgrade` has nothing newer to install and the CVE persists regardless. Bumping the base tag to one that already ships the fix (`1.28.3-alpine-slim`) is the actual remediation; the `apk upgrade` step then covers patch releases _within_ that tag going forward
 

@@ -49,7 +49,9 @@ Configured in `.github/dependabot.yml`. All three ecosystems share the same base
 
 ### Docker ecosystem
 
-Tracks the two base images declared in the root `Dockerfile`: `node:24-alpine3.22` (`base` stage) and `nginx:1.28.2-alpine` (`prod` stage). rawg is a single-frontend static app — no separate backend/gateway image, and `docker-compose.yml` only declares a `dev` service (bind-mounted local dev container, same `Dockerfile`) with no additional pinned images to track
+Tracks the base images declared across two Dockerfiles plus the local smoke-test compose file: [`frontend/Dockerfile`](../frontend/Dockerfile) (`node:24-alpine3.22` `base`/`builder` stages, `nginx:1.28.3-alpine-slim` `prod` stage) and [`backend/Dockerfile`](../backend/Dockerfile) (`node:24-alpine3.22` throughout). [`.github/dependabot.yml`](../.github/dependabot.yml) has one `docker` ecosystem entry per Dockerfile location (`/frontend`, `/backend`) — Dependabot's docker support doesn't recurse, so each location needs its own entry, unlike the single-entry `npm` ecosystem above which understands the whole pnpm workspace from the root.
+
+`docker-compose.yml` at the repo root additionally pins `nginx:1.28-alpine` for the local `gateway` service (that's this repo's local dev/smoke-test topology only — the actually-deployed staging/production gateway lives in the separate `vps-infra` repo and needs its own Dependabot setup there) — a third `docker` entry at `/` tracks it
 
 Trivy detects CVEs in the built image; Dependabot provides the automated fix PR to bump the base image tag
 

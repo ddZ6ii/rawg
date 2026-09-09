@@ -49,7 +49,7 @@ feature/* branch
 
   ci.yml
     → code-quality + check-licences + audit-deps + audit-actions → test
-    → code-quality → build (tsc -b + vite build)
+    → code-quality → build (shared build → backend build → frontend build)
 
         ↓ merge / PR to dev
 
@@ -57,7 +57,7 @@ feature/* branch
     → get-short-sha
     → ci.yml (same checks as above)
     → build-and-deploy
-      - Docker build → scan → publish dev-<short-sha>
+      - Docker build → scan → publish frontend-dev-<short-sha> + api-dev-<short-sha>
       - HMAC-signed webhook → staging deploy
 
         ↓ promote dev → main (local fast-forward)
@@ -72,18 +72,18 @@ feature/* branch
       - pushes new version tag  e.g. v0.2.0
       - detects whether a release was actually published (tag-at-HEAD check)
     → build-and-push (only runs if a release was published)
-      - Docker build → scan → publish v0.2.0 + latest
+      - Docker build → scan → publish frontend-v0.2.0 + frontend-latest + api-v0.2.0 + api-latest
     → sync-dev (only runs if a release was published)
       - rebases dev onto main (back sync)
 ```
 
 ### Pipeline
 
-| Trigger Event                                  | Workflow      | Jobs                                                                                                                                     | Docker tag              | Deploy               |
-| ---------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | -------------------- |
-| Push to any branch (excl. `dev`) / PR to `dev` | `ci.yml`      | code-quality + check-licences + audit-deps + audit-actions → test; code-quality → build                                                  | —                       | —                    |
-| Push to `dev` (via PR)                         | `staging.yml` | get-short-sha + code-quality (`ci.yml`) → build-and-deploy (build → scan → publish → webhook)                                            | `dev-<short-sha>`       | Auto (staging, HMAC) |
-| Push to `main` (local ff merge)                | `release.yml` | code-quality (`ci.yml`) → release (semantic-release + tag-at-HEAD detection) → build-and-push _(conditional)_ + sync-dev _(conditional)_ | `v<version>` + `latest` | Manual (production)  |
+| Trigger Event                                  | Workflow      | Jobs                                                                                                                                                | Docker tag                                                              | Deploy               |
+| ---------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------- |
+| Push to any branch (excl. `dev`) / PR to `dev` | `ci.yml`      | code-quality + check-licences + audit-deps + audit-actions → test; code-quality → build                                                             | —                                                                       | —                    |
+| Push to `dev` (via PR)                         | `staging.yml` | get-short-sha + code-quality (`ci.yml`) → build-and-deploy (build+scan+publish ×2 images → webhook)                                                 | `frontend-dev-<short-sha>` + `api-dev-<short-sha>`                      | Auto (staging, HMAC) |
+| Push to `main` (local ff merge)                | `release.yml` | code-quality (`ci.yml`) → release (semantic-release + tag-at-HEAD detection) → build-and-push _(conditional, ×2 images)_ + sync-dev _(conditional)_ | `frontend-v<version>`/`frontend-latest` + `api-v<version>`/`api-latest` | Manual (production)  |
 
 ## <a id="prerequisites"></a>✋ Prerequisites
 
@@ -93,9 +93,9 @@ feature/* branch
 
 - **Git & GitHub** — configured for [linear history](./github-linear-history-workflow.md) (fast-forward only, no merge commits)
 
-- **Docker Hub** — an account, a repository, and a PAT (_Account → Settings → Personal access tokens → New Access Token_) to host and publish the Docker image
+- **Docker Hub** — an account, a repository, and a PAT (_Account → Settings → Personal access tokens → New Access Token_) to host and publish the frontend and backend Docker images
 
-- **Docker** — only needed to build/scan the production image in CI; local development uses `pnpm dev` directly, no Docker required
+- **Docker** — only needed to build/scan the production images in CI; local development uses `pnpm dev` directly, no Docker required
 
 - **Webhooks** — HMAC-signed hooks for both staging (automated, triggered from `staging.yml`) and production (manual, triggered via `scripts/deploy-prod.sh`) app deployments to the VPS
 
@@ -217,7 +217,7 @@ For new branches, only commits since the divergence point from `main` or `dev` a
 
   > 🚦 Requires `code-quality`, `check-licences`, `audit-deps`, and `audit-actions` to succeed before it can run
 
-- `build` — runs `pnpm run build:docker` (`tsc -b && vite build`) to catch build breakage early
+- `build` — builds `@rawg/shared` (`tsc -b`), then `backend` (`tsc -b`), then `frontend` (`pnpm run build:docker`, i.e. `tsc -b && vite build`) — in that order, since both `backend` and `frontend` depend on `@rawg/shared` via `workspace:*` — to catch build breakage early
 
   > 🚦 Requires only `code-quality` to succeed — not gated on `test`, so a build failure surfaces independently and as fast as possible
 
@@ -227,7 +227,7 @@ For new branches, only commits since the divergence point from `main` or `dev` a
 
 - Ships the application to Docker Hub, then triggers an HMAC-signed webhook that deploys it to the VPS staging environment
 - Triggers on push to `dev` (i.e. when a PR is merged)
-- Tags the Docker image with `dev-<short-sha>` for full traceability
+- Tags both Docker images with `frontend-dev-<short-sha>`/`api-dev-<short-sha>` for full traceability
 
 #### Configuration file
 
@@ -248,13 +248,13 @@ For new branches, only commits since the divergence point from `main` or `dev` a
 - `build-and-deploy`
 
   > 🚦 Requires `get-short-sha` and `code-quality` to succeed before it can run
-  - Builds a Docker image locally, uses [Trivy to scan it for HIGH/CRITICAL CVEs](./audit-docker-images.md), then pushes it to Docker Hub
+  - Builds the `frontend` and `backend` Docker images locally (one `build-push-docker` invocation each), uses [Trivy to scan each for HIGH/CRITICAL CVEs](./audit-docker-images.md), then pushes both to Docker Hub
     > 🛡️ The scan is a **hard gate** — a vulnerable image is never pushed to the registry
   - Sends an HMAC-signed `curl` request to the `deploy-rawg-staging` webhook
 
-#### Docker tag
+#### Docker tags
 
-- `dev-<short-sha>` (e.g. `dev-a3f5c2b`) — full traceability, always know which commit is on staging
+- `frontend-dev-<short-sha>` + `api-dev-<short-sha>` (e.g. `frontend-dev-a3f5c2b` + `api-dev-a3f5c2b`) — full traceability, always know which commit is on staging
 
 #### Staging deployment
 
@@ -284,7 +284,7 @@ Automated semantic versioning **and**, when a release is actually published, the
 
   > 🚦 Requires `code-quality` to succeed before it can run
 
-- `build-and-push` — builds a Docker image locally, uses [Trivy to scan it for HIGH/CRITICAL CVEs](./audit-docker-images.md), then pushes it to Docker Hub
+- `build-and-push` — builds the `frontend` and `backend` Docker images locally (one `build-push-docker` invocation each), uses [Trivy to scan each for HIGH/CRITICAL CVEs](./audit-docker-images.md), then pushes both to Docker Hub
 
   > 🚦 Requires `release` to succeed, and only runs if a release was actually published
   >
@@ -296,10 +296,10 @@ Automated semantic versioning **and**, when a release is actually published, the
 
 #### Docker tags
 
-Human-readable history on Docker Hub with `latest` always pointing to the most recent production release
+Human-readable history on Docker Hub with `frontend-latest`/`api-latest` always pointing to the most recent production release
 
-- `v<version>` (e.g. `v0.2.0`)
-- `latest`
+- `frontend-v<version>` + `frontend-latest` (e.g. `frontend-v0.2.0`)
+- `api-v<version>` + `api-latest` (e.g. `api-v0.2.0`)
 
 #### Production deployment
 
