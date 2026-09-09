@@ -20,6 +20,20 @@ export default defineConfig({
         rewrite: (requestPath) => requestPath.replace(/^\/api/, ''),
       },
     },
+    // @rawg/shared is a workspace package, symlinked into node_modules —
+    // un-ignore it so its rebuilt dist/ (via `tsc -b --watch`) actually
+    // triggers Vite instead of being silently skipped like real
+    // node_modules.
+    watch: {
+      ignored: ['!**/node_modules/@rawg/shared/**'],
+    },
+  },
+  optimizeDeps: {
+    // Excluding it stops Vite from pre-bundling it into a cached chunk —
+    // without this, edits to packages/shared only show up after a manual
+    // dev-server restart, since the cache doesn't invalidate on the
+    // dependency's own file changes.
+    exclude: ['@rawg/shared'],
   },
   test: {
     globals: true,

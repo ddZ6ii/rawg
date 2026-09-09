@@ -31,7 +31,7 @@ cp backend/.env.sample backend/.env   # fill in RAWG_API_KEY
 pnpm dev
 ```
 
-Runs both apps natively — frontend on `http://localhost:5173` (proxying `/api` to the backend), backend on `http://localhost:3000`. See [Docker](#docker-local-smoke-test) below for validating the full gateway → frontend/backend topology used in staging/production.
+Runs three processes natively — `@rawg/shared` in watch mode (`tsc -b --watch`, recompiles on save), frontend on `http://localhost:5173` (proxying `/api` to the backend), backend on `http://localhost:3000`. Edits to `packages/shared/src` are picked up live by both apps with no manual rebuild or restart: the backend's `tsx watch` reacts to the recompiled output automatically, and the frontend's Vite dev server is configured (`optimizeDeps.exclude` + `server.watch`) to always serve `@rawg/shared` fresh from disk instead of a stale pre-bundled cache. See [Docker](#docker-local-smoke-test) below for validating the full gateway → frontend/backend topology used in staging/production.
 
 ## Contributing
 

@@ -4,7 +4,7 @@
   "version": "0.1.10",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n frontend,backend -c blue,green \"pnpm --filter frontend run dev\" \"pnpm --filter backend run dev\"",
+    "dev": "concurrently -n shared,frontend,backend -c yellow,blue,green \"pnpm --filter @rawg/shared run dev\" \"pnpm --filter frontend run dev\" \"pnpm --filter backend run dev\"",
     "prepare": "husky || true",
     "commit": "cz",
     "format": "prettier --write .",
