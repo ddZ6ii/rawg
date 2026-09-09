@@ -13,6 +13,7 @@ overrides:
   minimatch@>=9.0.0 <9.0.7: '>=9.0.7'
   rollup@>=4.0.0 <4.59.0: '>=4.59.0'
   tmp@<=0.2.3: '>=0.2.4'
+  path-to-regexp@>=8.0.0 <8.4.0: '>=8.4.0' # GHSA-j3q9-mxjg-w52f — DoS via sequential optional groups, pulled in transitively by express@5's router dependency
   '@eslint/eslintrc>ajv': ^6.12.4
   postcss: ^8.5.18
   nanoid: ^3.3.18
