@@ -20,7 +20,7 @@
 version: 2
 updates:
   - package-ecosystem: 'npm' # also covers pnpm, since it reads pnpm-lock.yaml
-    directory: '/' # single root entry: no pnpm workspace packages to enumerate
+    directory: '/' # single root entry: Dependabot's npm/pnpm support reads pnpm-workspace.yaml + the lockfile and resolves the full workspace graph (frontend/, backend/, packages/shared/) from this one entry — unlike the docker ecosystem below, workspace packages don't need individual directory entries here
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 0 # security-updates-only behavior (see header)
@@ -35,7 +35,46 @@ updates:
       prefix-development: 'chore'
       include: 'scope'
 
+  # Docker's ecosystem support scans for a Dockerfile literally in the given
+  # `directory` — it does not recurse, so each Dockerfile location needs its
+  # own entry (unlike the npm entry above, which understands the whole pnpm
+  # workspace from one root entry).
   - package-ecosystem: 'docker'
+    directory: '/frontend'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0 # security-updates-only behavior (see header)
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - '*'
+    rebase-strategy: 'auto'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+
+  - package-ecosystem: 'docker'
+    directory: '/backend'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0 # security-updates-only behavior (see header)
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - '*'
+    rebase-strategy: 'auto'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+
+  - package-ecosystem: 'docker'
+    # Repo root — docker-compose.yml pins the local smoke-test gateway (nginx)
+    # image. NOTE: this is the LOCAL dev/smoke-test compose file only. The
+    # actually-deployed staging/production gateway is defined in the separate
+    # vps-infra repo and is NOT covered by this config — it needs its own
+    # Dependabot setup there.
     directory: '/'
     schedule:
       interval: 'weekly'

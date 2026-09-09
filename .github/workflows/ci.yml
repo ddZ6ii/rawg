@@ -100,5 +100,11 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
-      - name: Build project
-        run: pnpm run build:docker
+      - name: Build shared package
+        run: pnpm --filter @rawg/shared run build
+
+      - name: Build backend
+        run: pnpm --filter backend run build
+
+      - name: Build frontend
+        run: pnpm --filter frontend run build:docker
