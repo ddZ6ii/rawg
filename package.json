@@ -11,7 +11,7 @@
     "format:check": "prettier . --check",
     "format:lint": "pnpm run format && pnpm run lint",
     "lint": "eslint .",
-    "test": "pnpm --filter frontend run test",
+    "test": "pnpm -r --if-present run test",
     "build": "pnpm run format:lint && pnpm -r run build"
   },
   "config": {

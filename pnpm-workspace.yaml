@@ -3,6 +3,13 @@ packages:
   - backend
   - packages/*
 
+# Single version pin shared across workspace packages — avoids drift between
+# frontend and backend's own vitest without relying on pnpm hoisting (this
+# repo keeps strict, non-hoisted node_modules).
+catalog:
+  vitest: ^4.1.9
+  '@vitest/coverage-v8': ^4.1.9
+
 overrides:
   ajv@<6.14.0: '>=6.14.0'
   lodash@>=4.0.0 <=4.17.22: '>=4.17.23'

@@ -22,7 +22,7 @@ const { dependencies: frontendDependencies } = JSON.parse(
 const reactVersion = frontendDependencies.react.replace(/^[\^~]/, '')
 
 export default defineConfig([
-  globalIgnores(['**/dist']),
+  globalIgnores(['**/dist', '**/coverage']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
