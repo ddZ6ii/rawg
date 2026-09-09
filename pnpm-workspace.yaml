@@ -1,3 +1,8 @@
+packages:
+  - frontend
+  - backend
+  - packages/*
+
 overrides:
   ajv@<6.14.0: '>=6.14.0'
   lodash@>=4.0.0 <=4.17.22: '>=4.17.23'
@@ -16,3 +21,11 @@ overrides:
 # Mitigate supply chain attacks
 minimumReleaseAge: '4320' # 3 days (in minutes)
 ignore-scripts: 'true'
+
+# esbuild's postinstall just places its platform binary (no network access,
+# no arbitrary code beyond that). pnpm 11 hard-fails `install --frozen-lockfile`
+# with ERR_PNPM_IGNORED_BUILDS unless a decision is explicitly recorded here —
+# `pnpm approve-builds esbuild` writes this. Without it, both Docker builds
+# (and any other frozen-lockfile install, e.g. CI) fail outright.
+allowBuilds:
+  esbuild: true

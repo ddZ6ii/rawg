@@ -1,7 +1,8 @@
 import axios from 'axios'
 import * as z from 'zod/mini'
 
-import { PaginatedResponseSchema } from '@/shared/schemas'
+import { PaginatedResponseSchema } from '@rawg/shared'
+
 import { apiClient } from '@/shared/services/api-client.service'
 import { HttpError } from '@/shared/services/http.error'
 import { ValidationError } from '@/shared/services/validation.error'

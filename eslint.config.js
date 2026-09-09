@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+
 import globals from 'globals'
 import js from '@eslint/js'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
@@ -9,8 +11,18 @@ import reactX from 'eslint-plugin-react-x'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
+// eslint-plugin-react's `version: 'detect'` does a plain `require('react')`,
+// which only walks up from its own node_modules — pnpm's per-package
+// isolation means that never reaches frontend/node_modules/react. Derive
+// the version straight from frontend/package.json instead, so it tracks
+// future React bumps there without needing manual edits here.
+const { dependencies: frontendDependencies } = JSON.parse(
+  readFileSync(new URL('./frontend/package.json', import.meta.url), 'utf-8'),
+)
+const reactVersion = frontendDependencies.react.replace(/^[\^~]/, '')
+
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['**/dist']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -29,7 +41,7 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -62,7 +74,7 @@ export default defineConfig([
     },
     settings: {
       react: {
-        version: 'detect',
+        version: reactVersion,
         defaultVersion: '19',
       },
     },
