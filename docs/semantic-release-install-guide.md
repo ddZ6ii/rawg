@@ -288,7 +288,7 @@ This repo keeps things to three workflow files, plus composite actions for share
 - `ci.yml` — `code-quality` + `check-licences` + `audit-deps` + `audit-actions` → `test`, called via `workflow_call` from both `staging.yml` and `release.yml`
 - `staging.yml` — merge to `dev` triggers a staging build + deploy
 - `release.yml` — push to `main` triggers automated versioning (semantic-release) and, when a release is published, building/pushing the release Docker images and syncing `dev` back onto `main` — all in one file, since `build-and-push` depends directly on the `release` job's output (`needs.release.outputs.released`) within the same workflow run (see the "Details" note under [Release workflow](#release-workflow))
-- Building/pushing a Docker image is done via the `build-push-docker` **composite action**, used as a step in `staging.yml` and `release.yml` rather than a separate reusable workflow
+- Building/pushing each Docker image is done via the `build-push-docker` **composite action**, used as two steps (one per image — `frontend`, `backend`) in `staging.yml` and `release.yml` rather than a separate reusable workflow
 
 The structure:
 
@@ -360,7 +360,7 @@ What happens on each push to `main`:
 
 3. The `get-release-tag` composite action (`.github/actions/get-release-tag/action.yml`) then detects whether a release actually happened this run. It compares the commit `HEAD` pointed at _before_ the `pnpm exec semantic-release` step ran (captured explicitly as a `before-sha` input) against whether a `v*.*.*` tag now points at `HEAD` _after_ — this distinguishes "a release was just published" from "HEAD already happened to sit on a pre-existing tag" (e.g. a push to `main` with no release-worthy commits since the last tag). semantic-release doesn't natively emit `GITHUB_OUTPUT`, so this is how `release`'s `released`/`version`/`sha` outputs are produced
 
-4. `build-and-push` job (needs `release`; only runs `if: needs.release.outputs.released == 'true'`) checks out the release commit (`ref: needs.release.outputs.sha`) and builds + pushes the Docker image to Docker Hub, tagged `v<version>` and `latest`
+4. `build-and-push` job (needs `release`; only runs `if: needs.release.outputs.released == 'true'`) checks out the release commit (`ref: needs.release.outputs.sha`) and builds + pushes both the `frontend` and `backend` Docker images to Docker Hub, tagged `frontend-v<version>`/`frontend-latest` and `api-v<version>`/`api-latest` respectively
 
 5. `sync-dev` job (needs `release`; also only runs `if: needs.release.outputs.released == 'true'`) rebases `dev` onto `main` and force-pushes (`--force-with-lease`) — ensures `dev` picks up the version bump commit, per the [Linear History Workflow](github-linear-history-workflow.md)
 
@@ -384,7 +384,7 @@ What happens on each push to `main`:
 
   > 🚦 Requires `code-quality` to succeed before it can run
 
-- `build-and-push` — builds and pushes the Docker image; only runs when `release` actually published a version
+- `build-and-push` — builds and pushes both the `frontend` and `backend` Docker images; only runs when `release` actually published a version
 
   > 🚦 Requires `release` to succeed, and only runs `if: needs.release.outputs.released == 'true'`
 

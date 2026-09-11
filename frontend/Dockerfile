@@ -4,26 +4,24 @@ FROM node:24-alpine3.22 AS base
 WORKDIR /app
 RUN corepack enable pnpm
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/package.json ./frontend/
+COPY packages/shared/package.json ./packages/shared/
 RUN pnpm install --frozen-lockfile
 
-# Stage 2: dev (see docker-compose.yml for bind mounts)
-FROM base AS dev
-EXPOSE 5173
-CMD ["pnpm", "run", "dev"]
-
-# Stage 3: build
+# Stage 2: build
 FROM base AS builder
 
-COPY vite.config.ts ./
-COPY components.json ./
-COPY tsconfig.json tsconfig.app.json tsconfig.node.json ./
-COPY public public
-COPY index.html ./
-COPY src src
-# Outputs to /app/dist
-RUN pnpm run build:docker
+COPY packages/shared ./packages/shared
+COPY frontend/vite.config.ts ./frontend
+COPY frontend/components.json ./frontend
+COPY frontend/tsconfig.json frontend/tsconfig.app.json frontend/tsconfig.node.json ./frontend/
+COPY frontend/public ./frontend/public
+COPY frontend/index.html ./frontend/
+COPY frontend/src ./frontend/src
+RUN pnpm --filter @rawg/shared run build
+RUN pnpm --filter frontend run build:docker
 
-# Stage 4: serve (production)
+# Stage 3: serve (production)
 FROM nginx:1.28.3-alpine-slim AS prod
 
 # Upgrade all Alpine packages, then fix nginx specifically: the official
@@ -45,8 +43,8 @@ RUN cp /etc/nginx/nginx.conf /tmp/nginx.conf.orig \
     && cp /tmp/nginx.conf.orig /etc/nginx/nginx.conf \
     && rm /tmp/nginx.conf.orig
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 ARG VERSION=unknown

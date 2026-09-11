@@ -68,11 +68,12 @@ Blocks on **high and critical** vulnerabilities (CVSS ≥ 7.0)
 
 `audit-deps` runs in parallel with `code-quality`, `check-licences`, and `audit-actions`. The `test` job is gated on all four:
 
-```
-code-quality   ─┐
-check-licences  │
-audit-deps      ├──> test
-audit-actions   ┘
+```mermaid
+flowchart LR
+    CQ["code-quality"] --> T["test"]
+    CL["check-licences"] --> T
+    AD["audit-deps"] --> T
+    AA["audit-actions"] --> T
 ```
 
 There is no dependency between linting and auditing deps — running them in parallel gives the fastest possible feedback. Docker image builds are gated on `code-quality` passing (not specifically on `test`) — see [`docs/audit-github-actions.md`](audit-github-actions.md) and [`docs/semantic-release-install-guide.md`](semantic-release-install-guide.md) for the actual job graphs

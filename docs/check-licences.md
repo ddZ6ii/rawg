@@ -37,11 +37,12 @@ License auditing blocks dependencies under strong-copyleft licenses (GPL, AGPL, 
 
 `check-licences` runs in parallel with `code-quality`, `audit-actions`, and `audit-deps`. `test` is gated on all four:
 
-```
-code-quality   ─┐
-audit-actions   ├──> test
-check-licences  │
-audit-deps     ─┘
+```mermaid
+flowchart LR
+    CQ["code-quality"] --> T["test"]
+    AA["audit-actions"] --> T
+    CL["check-licences"] --> T
+    AD["audit-deps"] --> T
 ```
 
 There's no dependency between these four jobs — running them in parallel gives the fastest possible feedback
