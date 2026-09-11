@@ -199,7 +199,23 @@ This builds the image from the local Dockerfile and scans it without pushing any
 
 `frontend`'s `prod` stage only contains compiled static assets served by nginx — no `node_modules` or lock files. All findings there are therefore OS-level packages (Alpine), fixed by upgrading the base image (see [Upgrading OS packages](#upgrading-os-packages))
 
-`backend`'s `prod` stage is different — it's a running Node process, so its `node_modules` (production dependencies only, via `pnpm install --prod`) is real attack surface Trivy scans too. A finding there is an **npm-level** CVE, not an OS package — fix it the same way `audit-deps`/Dependabot already handle npm CVEs elsewhere in this repo: bump the flagged package (`pnpm update <package>`) or wait for the Dependabot PR, then re-scan. The `apk upgrade`/OS-package flow below only applies to `backend`'s **base** `node:24-alpine3.22` image layer, not its dependencies
+`backend`'s `prod` stage is different — it's a running Node process, so there are **three** distinct categories of finding, not two:
+
+- **OS-level (Alpine)** — same fix as `frontend`: `apk upgrade --no-cache` in the `prod` stage (see [Upgrading OS packages](#upgrading-os-packages))
+- **A real backend dependency** (`express`, `axios`, `lru-cache`, `zod`, `@rawg/shared`, etc.) — an actual npm-level CVE in something `backend/package.json` declares. Fix it the same way `audit-deps`/Dependabot already handle npm CVEs elsewhere in this repo: bump the flagged package (`pnpm update <package>`) or wait for the Dependabot PR, then re-scan
+- **Leftover build tooling that isn't a real dependency at all** — this bit `rawg` in production. Trivy flagged `tar`/`pacote`/`sigstore`/`ip-address`/`brace-expansion`/`undici`/`pnpm` itself, none of which `backend/package.json` declares — confusing until you know where they actually come from:
+  - `corepack enable pnpm` downloads a full pnpm install (with its own vendored dependencies) into its cache directory to satisfy the `packageManager` pin. It's never invoked again once `pnpm install --prod` finishes building `node_modules`
+  - The base `node:24-alpine` image ships `npm` pre-installed, which bundles the _same kind_ of vendored dependencies — present even on a completely untouched base image, confirmed by scanning a plain `node:24-alpine3.22` container with nothing added. This app only ever uses `pnpm` to install and `node` to run; `npm`/`npx` are never invoked
+
+  Fix: strip both after the install step completes, in the same `RUN` as `pnpm install --prod`:
+
+  ```Dockerfile
+  RUN pnpm install --prod --frozen-lockfile \
+      && rm -rf /root/.cache/node/corepack /root/.cache/pnpm /root/.local/share/pnpm \
+      && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+  ```
+
+  Confirmed safe by actually running the container afterward, not just trusting the Dockerfile diff — `node_modules` already has real files via hard links, not symlinks back into either removed cache
 
 ### Strategy
 
@@ -213,7 +229,16 @@ For each finding, check the `Status` and `Fixed Version` columns in the Trivy ou
 
 ### Upgrading OS packages
 
-The `prod` stage is pinned to `nginx:1.28.3-alpine-slim` — a base tag that already ships a patched nginx build, rather than relying solely on `apk upgrade` to reach one. `-alpine-slim` also excludes 5 unused dynamic modules (acme/geoip/image-filter/njs/xslt — none referenced in `nginx.conf`) that would otherwise need purging before nginx could be force-upgraded cleanly. On top of that, the stage force-upgrades every Alpine package **including nginx itself**, so future patch-level CVEs (within `1.28.3-rX` Alpine package revisions) are covered without waiting on the next base-image bump:
+Both `frontend` and `backend` force-upgrade Alpine packages in their `prod` stage — the mechanics differ only because `frontend` also runs nginx, a pinned package that needs the reinstall trick below; `backend` doesn't.
+
+**`backend`** — plain `apk upgrade --no-cache`, no pinned package involved:
+
+```Dockerfile
+FROM node:24-alpine3.22 AS prod
+RUN apk upgrade --no-cache
+```
+
+**`frontend`** — the `prod` stage is pinned to `nginx:1.28.3-alpine-slim` — a base tag that already ships a patched nginx build, rather than relying solely on `apk upgrade` to reach one. `-alpine-slim` also excludes 5 unused dynamic modules (acme/geoip/image-filter/njs/xslt — none referenced in `nginx.conf`) that would otherwise need purging before nginx could be force-upgraded cleanly. On top of that, the stage force-upgrades every Alpine package **including nginx itself**, so future patch-level CVEs (within `1.28.3-rX` Alpine package revisions) are covered without waiting on the next base-image bump:
 
 ```Dockerfile
 FROM nginx:1.28.3-alpine-slim AS prod
