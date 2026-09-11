@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 
-import { GameSchema, type Game } from '@/features/games/schemas'
+import { GameSchema, type Game } from '@rawg/shared'
 import { createHttpService } from '@/shared/services'
 
 const GAME_KEYS = {

@@ -67,9 +67,21 @@ jobs:
           docker-username: ${{ vars.DOCKERHUB_USERNAME }}
           docker-repository: ${{ vars.DOCKERHUB_USERNAME }}/rawg
           docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
-          dockerfile-path: Dockerfile
-          latest-tag: latest
-          image-tag: v${{ needs.release.outputs.version }}
+          dockerfile-path: frontend/Dockerfile
+          latest-tag: frontend-latest
+          image-tag: frontend-v${{ needs.release.outputs.version }}
+          version: v${{ needs.release.outputs.version }}
+          revision: ${{ needs.release.outputs.sha }}
+
+      - name: Build and push backend image to Docker Hub
+        uses: ./.github/actions/build-push-docker
+        with:
+          docker-username: ${{ vars.DOCKERHUB_USERNAME }}
+          docker-repository: ${{ vars.DOCKERHUB_USERNAME }}/rawg
+          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerfile-path: backend/Dockerfile
+          latest-tag: api-latest
+          image-tag: api-v${{ needs.release.outputs.version }}
           version: v${{ needs.release.outputs.version }}
           revision: ${{ needs.release.outputs.sha }}
 
