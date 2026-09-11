@@ -7,7 +7,7 @@ packages:
 # frontend and backend's own vitest without relying on pnpm hoisting (this
 # repo keeps strict, non-hoisted node_modules).
 catalog:
-  vitest: ^4.1.9
+  vitest: ^5.0.0
   '@vitest/coverage-v8': ^4.1.9
 
 overrides:
