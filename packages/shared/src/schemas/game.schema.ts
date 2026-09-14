@@ -5,6 +5,7 @@ import { type PaginatedResponse } from './paginated-response.schema.js'
 const GameSchema = z.object({
   id: z.number(),
   name: z.string(),
+  background_image: z.nullable(z.url()),
 })
 
 type Game = z.infer<typeof GameSchema>

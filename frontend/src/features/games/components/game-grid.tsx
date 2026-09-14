@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
+import { GameCard } from '@/features/games/components/game-card'
 import { createGamesQueryOptions } from '@/features/games/services'
 
 export function GameGrid() {
@@ -14,9 +15,11 @@ export function GameGrid() {
   }
 
   return (
-    <ul className="list-inside space-y-1">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(350px,100%),1fr))] gap-2 md:gap-4">
       {games.map((game) => (
-        <li key={game.id}>{game.name}</li>
+        <li key={game.id}>
+          <GameCard game={game} />
+        </li>
       ))}
     </ul>
   )
