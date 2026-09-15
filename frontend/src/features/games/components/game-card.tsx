@@ -2,7 +2,13 @@ import { Gamepad2Icon } from 'lucide-react'
 
 import type { Game } from '@rawg/shared'
 
-import { Card, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import PlatformIconList from '@/features/games/components/platform-icon-list'
+import {
+  Card,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card'
 
 export function GameCard({ game }: { game: Game }) {
   return (
@@ -21,9 +27,16 @@ export function GameCard({ game }: { game: Game }) {
           <p className="text-sm">No thumbnail available</p>
         </div>
       )}
+
       <CardHeader>
         <CardTitle className="lg:text-xl">{game.name}</CardTitle>
       </CardHeader>
+
+      <CardFooter className="border-t">
+        <PlatformIconList
+          platforms={(game.parent_platforms ?? []).map((p) => p.platform)}
+        />
+      </CardFooter>
     </Card>
   )
 }

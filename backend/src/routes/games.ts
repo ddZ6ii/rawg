@@ -1,11 +1,11 @@
+import { Router, type Router as RouterType } from 'express'
+import * as z from 'zod/mini'
+
 import {
   GameSchema,
   PaginatedResponseSchema,
   type GamesPaginatedResponse,
 } from '@rawg/shared'
-import { Router } from 'express'
-import type { Router as RouterType } from 'express'
-import * as z from 'zod/mini'
 
 import { cache } from '../lib/cache.js'
 import { rawgClient } from '../lib/rawg-client.js'
