@@ -2,7 +2,8 @@ import { Gamepad2Icon } from 'lucide-react'
 
 import type { Game } from '@rawg/shared'
 
-import PlatformIconList from '@/features/games/components/platform-icon-list'
+import { CriticScore } from '@/features/games/components/critic-score'
+import { PlatformIconList } from '@/features/games/components/platform-icon-list'
 import {
   Card,
   CardFooter,
@@ -32,10 +33,11 @@ export function GameCard({ game }: { game: Game }) {
         <CardTitle className="lg:text-xl">{game.name}</CardTitle>
       </CardHeader>
 
-      <CardFooter className="border-t">
+      <CardFooter className="justify-between gap-2 border-t">
         <PlatformIconList
           platforms={(game.parent_platforms ?? []).map((p) => p.platform)}
         />
+        <CriticScore score={game.metacritic} />
       </CardFooter>
     </Card>
   )

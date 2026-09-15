@@ -27,11 +27,7 @@ const ICON_MAP: Record<string, IconType> = {
   xbox: FaXbox,
 }
 
-export default function PlatformIconList({
-  platforms,
-}: {
-  platforms: Platform[]
-}) {
+export function PlatformIconList({ platforms }: { platforms: Platform[] }) {
   return (
     <ul className="text-muted-foreground flex flex-wrap items-center gap-2">
       {platforms.map((platform) => {

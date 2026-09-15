@@ -7,6 +7,7 @@ const GameSchema = z.object({
   id: z.number(),
   name: z.string(),
   background_image: z.nullable(z.url()),
+  metacritic: z.nullable(z.number()),
   parent_platforms: z.nullable(
     z.array(z.object({ platform: ParentPlatformSchema })),
   ),
