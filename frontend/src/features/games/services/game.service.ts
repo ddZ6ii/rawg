@@ -16,7 +16,8 @@ function createGamesQueryOptions<TData = Game[]>(
   return queryOptions({
     queryKey: GAME_KEYS.all,
     queryFn: ({ signal }) => gameService.getAll(GameSchema, signal),
-    select: (response) => select?.(response.results) ?? response.results,
+    select: (response) =>
+      (select ? select(response.results) : response.results) as TData,
   })
 }
 
