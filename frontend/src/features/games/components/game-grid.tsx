@@ -1,8 +1,20 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
+import {
+  GameCard,
+  GameCardSkeleton,
+} from '@/features/games/components/game-card'
 import { createGamesQueryOptions } from '@/features/games/services'
 
-export function GameGrid() {
+function GameGridContainer({ children }: React.PropsWithChildren) {
+  return (
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(350px,100%),1fr))] gap-2 md:gap-4">
+      {children}
+    </ul>
+  )
+}
+
+function GameGrid() {
   const { data: games } = useSuspenseQuery(createGamesQueryOptions())
 
   if (games.length === 0) {
@@ -14,10 +26,26 @@ export function GameGrid() {
   }
 
   return (
-    <ul className="list-inside space-y-1">
+    <GameGridContainer>
       {games.map((game) => (
-        <li key={game.id}>{game.name}</li>
+        <li key={game.id}>
+          <GameCard game={game} />
+        </li>
       ))}
-    </ul>
+    </GameGridContainer>
   )
 }
+
+function GameGridSkeleton({ length = 20 }: { length?: number }) {
+  return (
+    <GameGridContainer>
+      {Array.from({ length }).map((_, index) => (
+        <li key={index}>
+          <GameCardSkeleton />
+        </li>
+      ))}
+    </GameGridContainer>
+  )
+}
+
+export { GameGrid, GameGridSkeleton }

@@ -17,9 +17,7 @@ ALLOWED_LICENSES='MIT;ISC;BSD-2-Clause;BSD-3-Clause;Apache-2.0'
 # added here; this is a documented per-package allowlist, not a broadened
 # license-type allowlist.
 EXCLUDED_PACKAGES=(
-  '@fontsource-variable/fredoka'              # OFL-1.1 — SIL Open Font License, commercial use allowed, no share-alike on the app
-  '@fontsource-variable/geist'                # OFL-1.1 — same as above
-  '@fontsource-variable/nunito'               # OFL-1.1 — same as above
+  '@fontsource-variable/exo-2'                # OFL-1.1 — SIL Open Font License, commercial use allowed, no share-alike on the app
   'isexe'                                     # BlueOak-1.0.0 — OSI-recognized permissive, equivalent to MIT/BSD
   'lru-cache'                                 # BlueOak-1.0.0 — same as above
   'minimatch'                                 # BlueOak-1.0.0 — same as above

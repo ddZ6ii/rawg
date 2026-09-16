@@ -3,6 +3,7 @@ export {
   type Game,
   type GamesPaginatedResponse,
 } from './schemas/game.schema.js'
+export { type Platform } from './schemas/platform.schema.js'
 export {
   PaginatedResponseSchema,
   type PaginatedResponse,
