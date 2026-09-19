@@ -1,3 +1,4 @@
 export { capitalize } from './capitalize'
-export { isRetryableError, getErrorMessage } from './error'
+export { getCroppedImage } from './get-cropped-image'
+export { getErrorMessage, isRetryableError } from './error'
 export { getSavedPreferences } from './get-saved-preferences'

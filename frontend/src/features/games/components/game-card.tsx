@@ -1,10 +1,9 @@
-import { Gamepad2Icon } from 'lucide-react'
+import { MdVideogameAssetOff } from 'react-icons/md'
 
 import type { Game } from '@rawg/shared'
 
 import { CriticScore } from '@/features/games/components/critic-score'
 import { PlatformIconList } from '@/features/games/components/platform-icon-list'
-import { getCroppedImage } from '@/features/games/utilities/get-cropped-image'
 import {
   Card,
   CardFooter,
@@ -12,6 +11,7 @@ import {
   CardTitle,
 } from '@/shared/components/ui/card'
 import { Skeleton } from '@/shared/components/ui/skeleton'
+import { getCroppedImage } from '@/shared/utilities'
 
 function GameCardContainer({ children }: React.PropsWithChildren) {
   return <Card className="overflow-hidden pb-4">{children} </Card>
@@ -30,13 +30,15 @@ function GameCard({ game }: { game: Game }) {
         />
       ) : (
         <div className="bg-muted text-muted-foreground grid aspect-video w-full place-content-center justify-items-center gap-1">
-          <Gamepad2Icon className="size-8" />
+          <MdVideogameAssetOff className="size-8" />
           <p className="text-sm">No thumbnail available</p>
         </div>
       )}
 
       <CardHeader>
-        <CardTitle className="text-lg lg:text-xl">{game.name}</CardTitle>
+        <CardTitle className="text-lg lg:text-xl">
+          <h2>{game.name}</h2>
+        </CardTitle>
       </CardHeader>
 
       <CardFooter className="justify-between gap-2 border-t">

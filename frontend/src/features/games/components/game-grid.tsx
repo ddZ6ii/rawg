@@ -1,5 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
+import type { Genre } from '@rawg/shared'
+
 import {
   GameCard,
   GameCardSkeleton,
@@ -14,8 +16,9 @@ function GameGridContainer({ children }: React.PropsWithChildren) {
   )
 }
 
-function GameGrid() {
-  const { data: games } = useSuspenseQuery(createGamesQueryOptions())
+function GameGrid({ selectedGenre }: { selectedGenre: Genre | null }) {
+  const options = selectedGenre ? { genres: selectedGenre.id.toString() } : {}
+  const { data: games } = useSuspenseQuery(createGamesQueryOptions({ options }))
 
   if (games.length === 0) {
     return (

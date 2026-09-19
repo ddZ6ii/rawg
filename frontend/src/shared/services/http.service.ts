@@ -16,9 +16,13 @@ class HttpService {
   async getAll<TSchema extends z.core.SomeType>(
     schema: TSchema,
     signal?: AbortSignal,
+    params?: Record<string, unknown>,
   ) {
     try {
-      const response = await apiClient.get(this.endpoint, { signal })
+      const response = await apiClient.get(this.endpoint, {
+        signal,
+        params,
+      })
       return z.parse(PaginatedResponseSchema(schema), response.data)
     } catch (error) {
       if (axios.isCancel(error)) throw error

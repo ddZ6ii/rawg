@@ -2,11 +2,11 @@ import { Router, type Router as RouterType } from 'express'
 import * as z from 'zod/mini'
 
 import {
-  GameSchema,
-  GamesParamsSchema,
+  GenreSchema,
+  GenresParamsSchema,
   InvalidInputError,
   PaginatedResponseSchema,
-  type GamesPaginatedResponse,
+  type GenresPaginatedResponse,
 } from '@rawg/shared'
 
 import { cache } from '../lib/cache.js'
@@ -15,7 +15,7 @@ import { stripApiKey } from '../utilities/strip-api-key.js'
 
 const router: RouterType = Router()
 
-router.get('/games', async (req, res) => {
+router.get('/genres', async (req, res) => {
   const cacheKey = req.originalUrl
   const cached = cache.get(cacheKey)
   if (cached) {
@@ -23,15 +23,15 @@ router.get('/games', async (req, res) => {
     return
   }
 
-  const parsedQuery = z.safeParse(GamesParamsSchema, req.query)
+  const parsedQuery = z.safeParse(GenresParamsSchema, req.query)
   if (!parsedQuery.success) {
     throw new InvalidInputError(parsedQuery.error, 'Invalid query parameters')
   }
 
-  const { data } = await rawgClient.get<GamesPaginatedResponse>('/games', {
+  const { data } = await rawgClient.get<GenresPaginatedResponse>('/genres', {
     params: parsedQuery.data,
   })
-  const parsed = z.parse(PaginatedResponseSchema(GameSchema), data)
+  const parsed = z.parse(PaginatedResponseSchema(GenreSchema), data)
 
   parsed.next = stripApiKey(parsed.next)
   parsed.previous = stripApiKey(parsed.previous)
@@ -41,4 +41,4 @@ router.get('/games', async (req, res) => {
   res.json(parsed)
 })
 
-export { router as gamesRouter }
+export { router as genresRouter }
