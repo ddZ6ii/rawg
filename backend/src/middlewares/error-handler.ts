@@ -2,12 +2,19 @@ import axios from 'axios'
 import type { NextFunction, Request, Response } from 'express'
 import * as z from 'zod/mini'
 
+import { InvalidInputError } from '@rawg/shared'
+
 export function errorHandler(
   error: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction,
 ) {
+  if (error instanceof InvalidInputError) {
+    res.status(400).json({ error: error.message })
+    return
+  }
+
   if (axios.isAxiosError(error)) {
     const status = error.response?.status ?? 502
     res.status(status).json({ error: 'Upstream RAWG API request failed' })

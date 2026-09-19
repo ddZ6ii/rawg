@@ -1,14 +1,18 @@
 import { type FallbackProps } from 'react-error-boundary'
 
 import { Button } from '@/shared/components/ui/button'
+import { cn } from '@/shared/lib/utils'
 import { getErrorMessage, isRetryableError } from '@/shared/utilities'
 
-export function GameErrorFallback({
+export function WidgetErrorFallback({
   error,
   resetErrorBoundary,
-}: FallbackProps) {
+  className,
+}: FallbackProps & {
+  className?: string
+}) {
   return (
-    <div className="grid h-full place-content-center justify-items-center space-y-4 p-2">
+    <div className={cn('grid place-content-center space-y-4 p-2', className)}>
       <pre>{getErrorMessage(error)}</pre>
 
       {isRetryableError(error) && (
