@@ -1,18 +1,31 @@
 import { useState } from 'react'
 
-import type { Genre } from '@rawg/shared'
+import type { Genre, Platform } from '@rawg/shared'
 
 import { GameGrid, GameGridSkeleton } from '@/features/games/components'
 import { GenreList, GenreListSkeleton } from '@/features/genres/components'
 import {
+  SelectPlatform,
+  SelectPlatformSkeleton,
+} from '@/features/platforms/components'
+import {
   NavBar,
   SelectTheme,
   SuspenseQueryBoundary,
+  TruncatedTooltip,
   WidgetErrorFallback,
 } from '@/shared/components'
+import { useIsMobile } from '@/shared/hooks'
+import { getPageTitle } from '@/shared/utilities'
 
 export default function App() {
+  const isMobile = useIsMobile()
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null)
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
+    null,
+  )
+
+  const title = getPageTitle(selectedGenre?.name, selectedPlatform?.name)
 
   const handleSelectGenre = (genre: Genre) => {
     if (selectedGenre?.id === genre.id) {
@@ -29,37 +42,59 @@ export default function App() {
         <SelectTheme />
       </header>
 
-      <aside className="hidden lg:block">
-        <SuspenseQueryBoundary
-          fallback={(props) => (
-            <WidgetErrorFallback className="justify-items-start" {...props} />
-          )}
-          loadingFallback={<GenreListSkeleton />}
-        >
-          <GenreList
-            selectedGenre={selectedGenre}
-            onSelectGenre={handleSelectGenre}
-          />
-        </SuspenseQueryBoundary>
-      </aside>
-
-      <main className="h-full">
-        <div className="space-y-2">
-          <h1 className="text-xl font-semibold lg:text-2xl">
-            {selectedGenre ? selectedGenre.name : 'All Games'}{' '}
-          </h1>
+      {!isMobile && (
+        <aside>
           <SuspenseQueryBoundary
             fallback={(props) => (
-              <WidgetErrorFallback
-                className="h-full justify-items-center"
-                {...props}
-              />
+              <WidgetErrorFallback className="justify-items-start" {...props} />
             )}
-            loadingFallback={<GameGridSkeleton />}
+            loadingFallback={<GenreListSkeleton />}
           >
-            <GameGrid selectedGenre={selectedGenre} />
+            <GenreList
+              selectedGenre={selectedGenre}
+              onSelectGenre={handleSelectGenre}
+            />
           </SuspenseQueryBoundary>
+        </aside>
+      )}
+
+      <main className="h-full min-w-0 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <TruncatedTooltip tooltip={title}>
+            <h1 className="min-w-0 truncate text-xl font-semibold lg:text-2xl">
+              {title}
+            </h1>
+          </TruncatedTooltip>
+          {!isMobile && (
+            <SuspenseQueryBoundary
+              fallback={(props) => (
+                <WidgetErrorFallback
+                  {...props}
+                  message="Couldn't load platforms."
+                  className="text-muted-foreground text-sm"
+                />
+              )}
+              loadingFallback={<SelectPlatformSkeleton />}
+            >
+              <SelectPlatform
+                selectedPlatform={selectedPlatform}
+                onSelectPlatform={setSelectedPlatform}
+              />
+            </SuspenseQueryBoundary>
+          )}
         </div>
+
+        <SuspenseQueryBoundary
+          fallback={(props) => (
+            <WidgetErrorFallback
+              className="h-full justify-items-center"
+              {...props}
+            />
+          )}
+          loadingFallback={<GameGridSkeleton />}
+        >
+          <GameGrid selectedGenre={selectedGenre} />
+        </SuspenseQueryBoundary>
       </main>
     </div>
   )

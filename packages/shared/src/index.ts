@@ -13,7 +13,13 @@ export {
   type GamesPaginatedResponse,
   type GamesParams,
 } from './schemas/game.schema.js'
-export { type Platform } from './schemas/platform.schema.js'
+export {
+  PlatformSchema,
+  PlatformsParamsSchema,
+  type Platform,
+  type PlatformsPaginatedResponse,
+  type PlatformsParams,
+} from './schemas/platform.schema.js'
 export {
   PaginatedResponseSchema,
   type PaginatedResponse,

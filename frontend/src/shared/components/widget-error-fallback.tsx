@@ -8,12 +8,14 @@ export function WidgetErrorFallback({
   error,
   resetErrorBoundary,
   className,
+  message,
 }: FallbackProps & {
   className?: string
+  message?: string
 }) {
   return (
     <div className={cn('grid place-content-center space-y-4 p-2', className)}>
-      <pre>{getErrorMessage(error)}</pre>
+      <pre>{message ?? getErrorMessage(error)}</pre>
 
       {isRetryableError(error) && (
         <Button variant="secondary" onClick={resetErrorBoundary}>
