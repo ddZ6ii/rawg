@@ -17,6 +17,10 @@ import {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      // Prevent staleness-based refetches since data is not expected to change (no mutations)
+      staleTime: Infinity,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
       retry: (failureCount, error) =>
         isRetryableError(error) && failureCount < 3,
       throwOnError: false,
