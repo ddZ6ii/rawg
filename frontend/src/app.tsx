@@ -3,6 +3,7 @@ import { useState } from 'react'
 import type { Genre, Platform } from '@rawg/shared'
 
 import { GameGrid, GameGridSkeleton } from '@/features/games/components'
+import type { GameQuery } from '@/features/games/types'
 import { GenreList, GenreListSkeleton } from '@/features/genres/components'
 import {
   SelectPlatform,
@@ -20,15 +21,25 @@ import { getPageTitle } from '@/shared/utilities'
 
 export default function App() {
   const isMobile = useIsMobile()
-  const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null)
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
-    null,
-  )
+  const [gameQuery, setGameQuery] = useState<GameQuery>({
+    genre: null,
+    platform: null,
+  })
 
-  const title = getPageTitle(selectedGenre?.name, selectedPlatform?.name)
+  const title = getPageTitle(gameQuery.genre?.name, gameQuery.platform?.name)
 
-  const toggleSelectedGenre = (genre: Genre) => {
-    setSelectedGenre(genre.id === selectedGenre?.id ? null : genre)
+  const handleSelectedGenre = (genre: Genre) => {
+    setGameQuery((prev) => ({
+      ...prev,
+      genre: genre.id === prev.genre?.id ? null : genre,
+    }))
+  }
+
+  const handleSelectPlatform = (platform: Platform | null) => {
+    setGameQuery((prev) => ({
+      ...prev,
+      platform,
+    }))
   }
 
   return (
@@ -47,8 +58,8 @@ export default function App() {
             loadingFallback={<GenreListSkeleton />}
           >
             <GenreList
-              selectedGenre={selectedGenre}
-              onSelectGenre={toggleSelectedGenre}
+              selectedGenre={gameQuery.genre}
+              onSelectGenre={handleSelectedGenre}
             />
           </SuspenseQueryBoundary>
         </aside>
@@ -73,8 +84,8 @@ export default function App() {
               loadingFallback={<SelectPlatformSkeleton />}
             >
               <SelectPlatform
-                selectedPlatform={selectedPlatform}
-                onSelectPlatform={setSelectedPlatform}
+                selectedPlatform={gameQuery.platform}
+                onSelectPlatform={handleSelectPlatform}
               />
             </SuspenseQueryBoundary>
           )}
@@ -89,10 +100,7 @@ export default function App() {
           )}
           loadingFallback={<GameGridSkeleton />}
         >
-          <GameGrid
-            selectedGenreId={selectedGenre?.id}
-            selectedPlatformId={selectedPlatform?.id}
-          />
+          <GameGrid gameQuery={gameQuery} />
         </SuspenseQueryBoundary>
       </main>
     </div>
