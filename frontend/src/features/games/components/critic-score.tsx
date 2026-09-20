@@ -8,5 +8,9 @@ export function CriticScore({ score }: { score: Game['metacritic'] }) {
   const scoreVariant =
     score >= 75 ? 'success' : score >= 60 ? 'warning' : 'destructive'
 
-  return <Badge variant={scoreVariant}>{score}</Badge>
+  return (
+    <Badge data-testid="critic-score" variant={scoreVariant}>
+      {score}
+    </Badge>
+  )
 }
