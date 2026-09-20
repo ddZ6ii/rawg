@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import type { Genre } from '@rawg/shared'
+import type { GamesParams, Genre, Platform } from '@rawg/shared'
 
 import {
   GameCard,
@@ -16,8 +16,19 @@ function GameGridContainer({ children }: React.PropsWithChildren) {
   )
 }
 
-function GameGrid({ selectedGenre }: { selectedGenre: Genre | null }) {
-  const options = selectedGenre ? { genres: selectedGenre.id.toString() } : {}
+function GameGrid({
+  selectedGenreId,
+  selectedPlatformId,
+}: {
+  selectedGenreId: Genre['id'] | undefined
+  selectedPlatformId: Platform['id'] | undefined
+}) {
+  const options: GamesParams = {}
+
+  if (selectedGenreId !== undefined) options.genres = selectedGenreId.toString()
+  if (selectedPlatformId !== undefined)
+    options.parent_platforms = selectedPlatformId.toString()
+
   const { data: games } = useSuspenseQuery(createGamesQueryOptions({ options }))
 
   if (games.length === 0) {

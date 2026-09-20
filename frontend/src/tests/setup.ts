@@ -2,6 +2,14 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
 
+// jsdom doesn't implement ResizeObserver — mock it so Radix UI components
+// (e.g. Select, Popover) don't throw when measuring content
+window.ResizeObserver = class ResizeObserver {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+}
+
 // jsdom doesn't implement window.matchMedia — mock it so UI libraries don't throw
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

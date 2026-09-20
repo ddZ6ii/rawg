@@ -1,7 +1,7 @@
 import * as z from 'zod/mini'
 
 import { type PaginatedResponse } from './paginated-response.schema.js'
-import { ParentPlatformSchema } from './platform.schema.js'
+import { PlatformSchema } from './platform.schema.js'
 
 const GameSchema = z.object({
   id: z.number(),
@@ -12,13 +12,12 @@ const GameSchema = z.object({
     z.transform((v) => (v === '' ? null : v)),
   ),
   metacritic: z.nullable(z.number()),
-  parent_platforms: z.nullable(
-    z.array(z.object({ platform: ParentPlatformSchema })),
-  ),
+  parent_platforms: z.nullable(z.array(z.object({ platform: PlatformSchema }))),
 })
 
 const GamesParamsSchema = z.object({
   genres: z.optional(z.string()),
+  parent_platforms: z.optional(z.string()),
 })
 
 type Game = z.infer<typeof GameSchema>
