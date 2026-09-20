@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import type { GamesParams, Genre, Platform } from '@rawg/shared'
+import type { GamesParams } from '@rawg/shared'
 
 import {
   GameCard,
   GameCardSkeleton,
 } from '@/features/games/components/game-card'
 import { createGamesQueryOptions } from '@/features/games/services'
+import type { GameQuery } from '@/features/games/types'
 
 function GameGridContainer({ children }: React.PropsWithChildren) {
   return (
@@ -16,18 +17,12 @@ function GameGridContainer({ children }: React.PropsWithChildren) {
   )
 }
 
-function GameGrid({
-  selectedGenreId,
-  selectedPlatformId,
-}: {
-  selectedGenreId: Genre['id'] | undefined
-  selectedPlatformId: Platform['id'] | undefined
-}) {
+function GameGrid({ gameQuery }: { gameQuery: GameQuery }) {
   const options: GamesParams = {}
 
-  if (selectedGenreId !== undefined) options.genres = selectedGenreId.toString()
-  if (selectedPlatformId !== undefined)
-    options.parent_platforms = selectedPlatformId.toString()
+  if (gameQuery.genre !== null) options.genres = gameQuery.genre.id.toString()
+  if (gameQuery.platform !== null)
+    options.parent_platforms = gameQuery.platform.id.toString()
 
   const { data: games } = useSuspenseQuery(createGamesQueryOptions({ options }))
 
