@@ -1,4 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { memo } from 'react'
 
 import type { Genre } from '@rawg/shared'
 
@@ -16,7 +17,7 @@ function GenreListContainer({ children }: React.PropsWithChildren) {
   )
 }
 
-function GenreList({
+const GenreList = memo(function GenreList({
   selectedGenre,
   onSelectGenre,
 }: {
@@ -45,7 +46,7 @@ function GenreList({
       ))}
     </GenreListContainer>
   )
-}
+})
 
 function GenreListSkeleton({ length = 19 }: { length?: number }) {
   return (

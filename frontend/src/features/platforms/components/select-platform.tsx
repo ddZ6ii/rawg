@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useId, useState } from 'react'
+import { memo, useId, useState } from 'react'
 
 import type { Platform } from '@rawg/shared'
 
@@ -20,7 +20,7 @@ import { capitalize } from '@/shared/utilities'
 const NO_SELECTION = 'All Platforms'
 const NO_SELECTION_VALUE = 'all'
 
-function SelectPlatform({
+const SelectPlatform = memo(function SelectPlatform({
   selectedPlatform,
   onSelectPlatform,
 }: {
@@ -98,7 +98,7 @@ function SelectPlatform({
       </Select>
     </div>
   )
-}
+})
 
 function SelectPlatformSkeleton() {
   return (

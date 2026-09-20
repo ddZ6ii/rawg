@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import type { Genre, Platform } from '@rawg/shared'
 
@@ -28,19 +28,19 @@ export default function App() {
 
   const title = getPageTitle(gameQuery.genre?.name, gameQuery.platform?.name)
 
-  const handleSelectedGenre = (genre: Genre) => {
+  const handleSelectedGenre = useCallback((genre: Genre) => {
     setGameQuery((prev) => ({
       ...prev,
       genre: genre.id === prev.genre?.id ? null : genre,
     }))
-  }
+  }, [])
 
-  const handleSelectPlatform = (platform: Platform | null) => {
+  const handleSelectPlatform = useCallback((platform: Platform | null) => {
     setGameQuery((prev) => ({
       ...prev,
       platform,
     }))
-  }
+  }, [])
 
   return (
     <div className="relative container mx-auto grid min-h-dvh grid-rows-[auto_1fr] gap-x-4 gap-y-2 p-2 lg:grid-cols-[220px_4fr] lg:px-4">
