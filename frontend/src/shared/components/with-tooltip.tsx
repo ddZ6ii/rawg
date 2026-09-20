@@ -1,9 +1,6 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/shared/components/ui/tooltip'
-import { cn } from '@/shared/lib/utils'
+import { cn } from '@/shared/lib'
+
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui'
 
 type WithTooltipProps = React.ComponentProps<typeof Tooltip> &
   Pick<React.ComponentProps<typeof TooltipContent>, 'side'> & {

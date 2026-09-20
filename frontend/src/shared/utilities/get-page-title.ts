@@ -1,6 +1,6 @@
 import type { Genre, Platform } from '@rawg/shared'
 
-import { capitalize } from '@/shared/utilities'
+import { capitalize } from './capitalize'
 
 export function getPageTitle(
   genreName: Genre['name'] | undefined,

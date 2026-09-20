@@ -2,10 +2,7 @@ import { MdOutlineWebAssetOff } from 'react-icons/md'
 
 import { type Genre } from '@rawg/shared'
 
-import { getCroppedImage } from '@/shared/utilities'
-import { Skeleton } from '@/shared/components/ui/skeleton'
-import { Button } from '@/shared/components/ui/button'
-import { cn } from '@/shared/lib/utils'
+import { Button, cn, getCroppedImage, Skeleton } from '@/shared'
 
 function GenreItemContainer({
   children,

@@ -8,7 +8,7 @@ import {
   type GamesParams,
 } from '@rawg/shared'
 
-import { createHttpService } from '@/shared/services'
+import { createHttpService } from '@/shared'
 
 const GAME_KEYS = {
   // Query keys

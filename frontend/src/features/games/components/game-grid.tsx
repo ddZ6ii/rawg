@@ -2,10 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import type { GamesParams } from '@rawg/shared'
 
-import {
-  GameCard,
-  GameCardSkeleton,
-} from '@/features/games/components/game-card'
+import { GameCard, GameCardSkeleton } from './game-card'
 import { createGamesQueryOptions } from '@/features/games/services'
 import type { GameQuery } from '@/features/games/types'
 

@@ -2,24 +2,20 @@ import { useCallback, useState } from 'react'
 
 import type { Genre, Platform } from '@rawg/shared'
 
-import { GameGrid, GameGridSkeleton } from '@/features/games/components'
-import type { GameQuery } from '@/features/games/types'
-import { GenreList, GenreListSkeleton } from '@/features/genres/components'
+import { GameGrid, GameGridSkeleton, type GameQuery } from '@/features/games'
+import { GenreList, GenreListSkeleton } from '@/features/genres'
+import { SelectPlatform, SelectPlatformSkeleton } from '@/features/platforms'
 import {
-  SelectPlatform,
-  SelectPlatformSkeleton,
-} from '@/features/platforms/components'
-import {
+  getPageTitle,
   NavBar,
   SelectTheme,
   SuspenseQueryBoundary,
   TruncatedTooltip,
+  useIsMobile,
   WidgetErrorFallback,
-} from '@/shared/components'
-import { useIsMobile } from '@/shared/hooks'
-import { getPageTitle } from '@/shared/utilities'
+} from '@/shared'
 
-export default function App() {
+export function App() {
   const isMobile = useIsMobile()
   const [gameQuery, setGameQuery] = useState<GameQuery>({
     genre: null,

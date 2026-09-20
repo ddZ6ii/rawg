@@ -1,11 +1,8 @@
 import { useRef, useState } from 'react'
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/shared/components/ui/tooltip'
 import { useIsTruncated } from '@/shared/hooks'
+
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui'
 
 /**
  * Wraps a single truncated element and shows a tooltip with its full

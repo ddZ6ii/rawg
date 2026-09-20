@@ -4,8 +4,8 @@ import { memo, useId, useState } from 'react'
 import type { Platform } from '@rawg/shared'
 
 import { createPlatformsQueryOptions } from '@/features/platforms/services'
-import { WithTooltip } from '@/shared/components'
 import {
+  capitalize,
   Select,
   SelectContent,
   SelectGroup,
@@ -13,9 +13,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/shared/components/ui/select'
-import { Spinner } from '@/shared/components/ui/spinner'
-import { capitalize } from '@/shared/utilities'
+  Spinner,
+  WithTooltip,
+} from '@/shared'
 
 const NO_SELECTION = 'All Platforms'
 const NO_SELECTION_VALUE = 'all'

@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useIsMobile } from '@/shared/hooks/use-is-mobile'
+import { useIsMobile } from './use-is-mobile'
 
 // Factory to create a controllable mock for each test
 function makeMql(matches: boolean) {

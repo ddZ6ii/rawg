@@ -6,11 +6,13 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 import './index.css'
 
-import App from '@/app.tsx'
-import { RootErrorFallback } from '@/shared/components'
-import { TooltipProvider } from '@/shared/components/ui/tooltip'
-import { ThemeContextProvider } from '@/shared/providers'
-import { isRetryableError } from '@/shared/utilities'
+import { App } from '@/app.tsx'
+import {
+  isRetryableError,
+  RootErrorFallback,
+  ThemeContextProvider,
+  TooltipProvider,
+} from '@/shared'
 
 const queryClient = new QueryClient({
   defaultOptions: {

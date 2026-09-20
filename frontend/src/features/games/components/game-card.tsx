@@ -2,16 +2,17 @@ import { MdVideogameAssetOff } from 'react-icons/md'
 
 import type { Game } from '@rawg/shared'
 
-import { CriticScore } from '@/features/games/components/critic-score'
-import { PlatformIconList } from '@/features/games/components/platform-icon-list'
 import {
   Card,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card'
-import { Skeleton } from '@/shared/components/ui/skeleton'
-import { getCroppedImage } from '@/shared/utilities'
+  getCroppedImage,
+  Skeleton,
+} from '@/shared'
+
+import { CriticScore } from './critic-score'
+import { PlatformIconList } from './platform-icon-list'
 
 function GameCardContainer({ children }: React.PropsWithChildren) {
   return <Card className="overflow-hidden pb-4">{children} </Card>

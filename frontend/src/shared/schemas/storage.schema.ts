@@ -1,6 +1,6 @@
 import * as z from 'zod/mini'
 
-import { ThemeSchema } from '@/shared/schemas/theme.schema'
+import { ThemeSchema } from './theme.schema'
 
 const StorageSchema = z.object({
   theme: ThemeSchema,
