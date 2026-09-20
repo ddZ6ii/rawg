@@ -7,12 +7,19 @@ import { Button, cn, getCroppedImage, Skeleton } from '@/shared'
 function GenreItemContainer({
   children,
   className,
+  isSelected,
   onClick,
-}: React.PropsWithChildren<{ className?: string; onClick?: () => void }>) {
+}: React.PropsWithChildren<{
+  className?: string
+  isSelected?: boolean
+  onClick?: () => void
+}>) {
   return (
     <li className="flex items-center gap-2 text-sm">
       <Button
         variant="ghost"
+        data-testid="genre-item"
+        data-selected={isSelected}
         className={cn(
           'text-muted-foreground hover:text-foreground w-full justify-start pl-0',
           className,
@@ -37,6 +44,7 @@ function GenreItem({
   return (
     <GenreItemContainer
       onClick={onClick}
+      isSelected={isSelected}
       className={cn(isSelected && 'text-foreground bg-accent font-semibold')}
     >
       {genre.image_background ? (
