@@ -1,6 +1,6 @@
 import type { Game } from '@rawg/shared'
 
-import { Badge } from '@/shared/components/ui/badge'
+import { Badge } from '@/shared'
 
 export function CriticScore({ score }: { score: Game['metacritic'] }) {
   if (score === null) return null

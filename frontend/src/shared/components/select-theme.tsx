@@ -1,7 +1,10 @@
 import { CogIcon, MoonIcon, SunIcon } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 
-import { WithTooltip } from '@/shared/components'
+import { useTheme } from '@/shared/hooks'
+import { THEMES, type Theme } from '@/shared/schemas'
+import { capitalize } from '@/shared/utilities'
+
 import {
   Select,
   SelectContent,
@@ -10,10 +13,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/shared/components/ui/select'
-import { useTheme } from '@/shared/hooks'
-import { THEMES, type Theme } from '@/shared/schemas'
-import { capitalize } from '@/shared/utilities'
+} from './ui'
+import { WithTooltip } from './with-tooltip'
 
 const ICONS: Record<Theme, ReactNode> = {
   dark: <MoonIcon aria-hidden={true} />,

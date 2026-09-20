@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
 
-import { TooltipProvider } from '@/shared/components/ui/tooltip'
+import { TooltipProvider } from '@/shared'
 
 export function RenderWithProvider({ children }: React.PropsWithChildren) {
   const queryClient = new QueryClient({

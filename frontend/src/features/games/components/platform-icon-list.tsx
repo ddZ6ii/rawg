@@ -12,7 +12,7 @@ import { MdPhoneIphone, MdSmartphone } from 'react-icons/md'
 
 import type { Platform } from '@rawg/shared'
 
-import { WithTooltip } from '@/shared/components'
+import { WithTooltip } from '@/shared'
 
 const ICON_MAP: Record<string, IconType> = {
   android: FaAndroid,

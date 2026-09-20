@@ -8,7 +8,7 @@ import {
   type GenresParams,
 } from '@rawg/shared'
 
-import { createHttpService } from '@/shared/services'
+import { createHttpService } from '@/shared'
 
 const GENRE_KEYS = {
   // Query keys

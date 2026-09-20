@@ -1,8 +1,9 @@
 import { type FallbackProps } from 'react-error-boundary'
 
-import { Button } from '@/shared/components/ui/button'
-import { cn } from '@/shared/lib/utils'
+import { cn } from '@/shared/lib'
 import { getErrorMessage, isRetryableError } from '@/shared/utilities'
+
+import { Button } from './ui'
 
 export function WidgetErrorFallback({
   error,

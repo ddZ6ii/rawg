@@ -1,6 +1,6 @@
 import type { FallbackProps } from 'react-error-boundary'
 
-import { Button } from '@/shared/components/ui/button'
+import { Button } from './ui'
 
 export function RootErrorFallback({ error }: FallbackProps) {
   return (

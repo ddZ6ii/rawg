@@ -8,7 +8,7 @@ import {
   type PlatformsParams,
 } from '@rawg/shared'
 
-import { createHttpService } from '@/shared/services'
+import { createHttpService } from '@/shared'
 
 const PLATFORM_KEYS = {
   // Query keys

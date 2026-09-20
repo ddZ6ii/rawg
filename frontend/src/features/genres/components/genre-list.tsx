@@ -3,10 +3,7 @@ import { memo } from 'react'
 
 import type { Genre } from '@rawg/shared'
 
-import {
-  GenreItem,
-  GenreItemSkeleton,
-} from '@/features/genres/components/genre-item'
+import { GenreItem, GenreItemSkeleton } from './genre-item'
 import { createGenresQueryOptions } from '@/features/genres/services'
 
 function GenreListContainer({ children }: React.PropsWithChildren) {

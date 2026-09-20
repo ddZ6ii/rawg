@@ -3,9 +3,9 @@ import * as z from 'zod/mini'
 
 import { PaginatedResponseSchema } from '@rawg/shared'
 
-import { apiClient } from '@/shared/services/api-client.service'
-import { HttpError } from '@/shared/services/http.error'
-import { ValidationError } from '@/shared/services/validation.error'
+import { apiClient } from './api-client.service'
+import { HttpError } from './http.error'
+import { ValidationError } from './validation.error'
 
 class HttpService {
   endpoint: string
