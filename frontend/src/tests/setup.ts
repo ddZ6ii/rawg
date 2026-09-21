@@ -25,6 +25,11 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
+// jsdom doesn't implement these — Radix's Select calls them when opening/interacting
+window.HTMLElement.prototype.scrollIntoView = vi.fn()
+window.HTMLElement.prototype.hasPointerCapture = vi.fn()
+window.HTMLElement.prototype.releasePointerCapture = vi.fn()
+
 // runs a clean after each test case (e.g. clearing jsdom)
 afterEach(() => {
   cleanup()

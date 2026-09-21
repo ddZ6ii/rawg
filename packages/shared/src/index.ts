@@ -1,4 +1,16 @@
 export { InvalidInputError } from './errors/invalid-input.error.js'
+
+export {
+  GAMES_SORT_ORDERS,
+  GamesSortOrdersSchema,
+  GamesParamsSchema,
+  GameSchema,
+  type Game,
+  type GamesPaginatedResponse,
+  type GamesParams,
+  type GamesSortOrders,
+} from './schemas/game.schema.js'
+
 export {
   GenreSchema,
   GenresParamsSchema,
@@ -6,13 +18,12 @@ export {
   type GenresPaginatedResponse,
   type GenresParams,
 } from './schemas/genre.schema.js'
+
 export {
-  GameSchema,
-  GamesParamsSchema,
-  type Game,
-  type GamesPaginatedResponse,
-  type GamesParams,
-} from './schemas/game.schema.js'
+  PaginatedResponseSchema,
+  type PaginatedResponse,
+} from './schemas/paginated-response.schema.js'
+
 export {
   PlatformSchema,
   PlatformsParamsSchema,
@@ -20,7 +31,3 @@ export {
   type PlatformsPaginatedResponse,
   type PlatformsParams,
 } from './schemas/platform.schema.js'
-export {
-  PaginatedResponseSchema,
-  type PaginatedResponse,
-} from './schemas/paginated-response.schema.js'
