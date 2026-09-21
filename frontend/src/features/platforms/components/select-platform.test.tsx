@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { Platform } from '@rawg/shared'
 
@@ -41,12 +41,6 @@ function renderSelectPlatform(selectedPlatform: Platform | null = null) {
   )
   return { ...view, onSelectPlatform }
 }
-
-beforeEach(() => {
-  window.HTMLElement.prototype.scrollIntoView = vi.fn()
-  window.HTMLElement.prototype.hasPointerCapture = vi.fn()
-  window.HTMLElement.prototype.releasePointerCapture = vi.fn()
-})
 
 describe('SelectPlatform', () => {
   it('shows "All Platforms" by default when nothing is selected', async () => {

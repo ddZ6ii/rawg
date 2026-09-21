@@ -19,7 +19,7 @@ const GenreList = memo(function GenreList({
   onSelectGenre,
 }: {
   selectedGenre: Genre | null
-  onSelectGenre: (genre: Genre) => void
+  onSelectGenre: (nextGenre: Genre) => void
 }) {
   const { data: genres } = useSuspenseQuery(
     createGenresQueryOptions({ options: { ordering: 'name' } }),
