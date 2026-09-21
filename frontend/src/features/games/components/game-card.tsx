@@ -47,12 +47,12 @@ function GameCard({ game }: { game: Game }) {
       </div>
 
       <CardHeader>
-        <CardTitle className="text-lg lg:text-xl">
-          <h2>{game.name}</h2>
+        <CardTitle asChild className="min-w-0 text-lg lg:text-xl">
+          <h2 className="line-clamp-2 min-h-[2lh]">{game.name}</h2>
         </CardTitle>
       </CardHeader>
 
-      <CardFooter className="justify-between gap-2 border-t">
+      <CardFooter className="-mt-2 justify-between gap-2 border-t">
         <PlatformIconList
           platforms={(game.parent_platforms ?? []).map((p) => p.platform)}
         />
