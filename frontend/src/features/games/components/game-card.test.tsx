@@ -37,11 +37,14 @@ describe('GameCard', () => {
     expect(screen.getByRole('img', { name: 'Portal 2' })).toBeInTheDocument()
   })
 
-  it('renders a fallback when background_image is null', () => {
+  it('renders a fallback image when background_image is null', () => {
     renderGameCard(noThumbnail)
 
-    expect(screen.getByText('No thumbnail available')).toBeInTheDocument()
-    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('img', {
+        name: `No thumbnail available for ${noThumbnail.name}`,
+      }),
+    ).toBeInTheDocument()
   })
 
   it('renders a platform icon per parent platform', () => {
