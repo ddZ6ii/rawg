@@ -1,5 +1,3 @@
-import { MdVideogameAssetOff } from 'react-icons/md'
-
 import type { Game } from '@rawg/shared'
 
 import {
@@ -11,6 +9,8 @@ import {
   Skeleton,
 } from '@/shared'
 
+import noImagePlaceholder from '@/assets/no-image-placeholder.webp'
+
 import { CriticScore } from './critic-score'
 import { PlatformIconList } from './platform-icon-list'
 
@@ -19,22 +19,32 @@ function GameCardContainer({ children }: React.PropsWithChildren) {
 }
 
 function GameCard({ game }: { game: Game }) {
+  const thumbnailUrl = game.background_image
+    ? getCroppedImage(game.background_image)
+    : noImagePlaceholder
+
+  const thumbnailAltText = game.background_image
+    ? game.name
+    : `No thumbnail available for ${game.name}`
+
+  const handleImageError: React.ReactEventHandler<HTMLImageElement> = (e) => {
+    if (e.currentTarget.src !== noImagePlaceholder) {
+      e.currentTarget.src = noImagePlaceholder
+    }
+  }
+
   return (
     <GameCardContainer>
-      {game.background_image ? (
+      <div className="aspect-video w-full overflow-hidden">
         <img
-          src={getCroppedImage(game.background_image)}
-          alt={game.name}
+          src={thumbnailUrl}
+          alt={thumbnailAltText}
           width={640}
           height={360}
-          className="aspect-video w-full object-cover transition-transform hover:scale-105"
+          className="size-full object-cover transition-transform hover:scale-105"
+          onError={handleImageError}
         />
-      ) : (
-        <div className="bg-muted text-muted-foreground grid aspect-video w-full place-content-center justify-items-center gap-1">
-          <MdVideogameAssetOff className="size-8" />
-          <p className="text-sm">No thumbnail available</p>
-        </div>
-      )}
+      </div>
 
       <CardHeader>
         <CardTitle className="text-lg lg:text-xl">
