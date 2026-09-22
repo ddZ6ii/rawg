@@ -68,7 +68,9 @@ function GameCardSkeleton() {
       <Skeleton className="aspect-video w-full" />
 
       <CardHeader>
-        <Skeleton className="mb-2.5 h-4.5 w-1/2 lg:mb-2 lg:h-5" />
+        <div className="min-h-[2lh]">
+          <Skeleton className="mb-2.5 h-4.5 w-1/2 lg:mb-2 lg:h-5" />
+        </div>
       </CardHeader>
 
       <CardFooter className="justify-between gap-2 border-t">
