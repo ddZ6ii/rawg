@@ -15,13 +15,13 @@ function GenreItemContainer({
   onClick?: () => void
 }>) {
   return (
-    <li className="flex items-center gap-2 text-sm">
+    <li className="flex items-center gap-2">
       <Button
         variant="ghost"
         data-testid="genre-item"
         data-selected={isSelected}
         className={cn(
-          'text-muted-foreground hover:text-foreground w-full justify-start pl-0',
+          'text-muted-foreground hover:text-foreground dark:hover:bg-popover/40 w-full justify-start rounded-sm pl-0 text-sm',
           className,
         )}
         onClick={onClick}
@@ -45,7 +45,10 @@ function GenreItem({
     <GenreItemContainer
       onClick={onClick}
       isSelected={isSelected}
-      className={cn(isSelected && 'text-foreground bg-accent font-semibold')}
+      className={cn(
+        isSelected &&
+          'bg-accent dark:bg-popover/40 text-foreground dark:shadow-muted-foreground/25 dark:ring-foreground/10 drop-shadow-sm dark:shadow-[0_4px_12px_-2px] dark:ring dark:drop-shadow-none',
+      )}
     >
       {genre.image_background ? (
         <img
