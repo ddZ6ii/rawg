@@ -53,9 +53,15 @@ export function App() {
 
       {!isMobile && (
         <aside>
+          <h2 className="pl-2 text-lg font-semibold">Genres</h2>
+
           <SuspenseQueryBoundary
             fallback={(props) => (
-              <WidgetErrorFallback className="justify-items-start" {...props} />
+              <WidgetErrorFallback
+                message="Couldn't load genres."
+                className="mt-1 pl-2 text-sm"
+                {...props}
+              />
             )}
             loadingFallback={<GenreListSkeleton />}
           >
@@ -82,7 +88,7 @@ export function App() {
                   <WidgetErrorFallback
                     {...props}
                     message="Couldn't load platforms."
-                    className="text-muted-foreground text-sm"
+                    className="mr-2 self-end text-sm"
                   />
                 )}
                 loadingFallback={<SelectPlatformSkeleton />}
@@ -104,7 +110,8 @@ export function App() {
         <SuspenseQueryBoundary
           fallback={(props) => (
             <WidgetErrorFallback
-              className="h-full justify-items-center"
+              message="Couldn't load games."
+              className="h-full place-content-start"
               {...props}
             />
           )}

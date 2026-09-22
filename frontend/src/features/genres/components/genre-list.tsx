@@ -7,11 +7,7 @@ import { GenreItem, GenreItemSkeleton } from './genre-item'
 import { createGenresQueryOptions } from '@/features/genres/services'
 
 function GenreListContainer({ children }: React.PropsWithChildren) {
-  return (
-    <ul className="bg-popover sticky top-4 space-y-4 rounded-md border-r p-2 shadow-lg">
-      {children}
-    </ul>
-  )
+  return <ul className="sticky top-4 space-y-4 rounded-md p-2">{children}</ul>
 }
 
 const GenreList = memo(function GenreList({

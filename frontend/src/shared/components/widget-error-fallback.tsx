@@ -15,7 +15,7 @@ export function WidgetErrorFallback({
   message?: string
 }) {
   return (
-    <div className={cn('grid place-content-center space-y-4 p-2', className)}>
+    <div className={cn('text-muted-foreground grid space-y-4', className)}>
       <pre>{message ?? getErrorMessage(error)}</pre>
 
       {isRetryableError(error) && (
