@@ -45,6 +45,7 @@ function GenreListSkeleton({ length = 19 }: { length?: number }) {
   return (
     <GenreListContainer>
       {Array.from({ length }).map((_, index) => (
+        // eslint-disable-next-line react-x/no-array-index-key -- static-length skeleton placeholders, never reordered/added/removed individually
         <GenreItemSkeleton key={index} />
       ))}
     </GenreListContainer>

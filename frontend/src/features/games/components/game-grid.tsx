@@ -41,6 +41,7 @@ function GameGridSkeleton({ length = 20 }: { length?: number }) {
   return (
     <GameGridContainer>
       {Array.from({ length }).map((_, index) => (
+        // eslint-disable-next-line react-x/no-array-index-key -- static-length skeleton placeholders, never reordered/added/removed individually
         <li key={index}>
           <GameCardSkeleton />
         </li>

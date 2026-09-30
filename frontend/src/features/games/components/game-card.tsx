@@ -77,6 +77,7 @@ function GameCardSkeleton() {
         <div className="flex gap-2">
           {Array.from({ length: 3 }).map((_, index) => (
             <Skeleton
+              // eslint-disable-next-line react-x/no-array-index-key -- static-length skeleton placeholders, never reordered/added/removed individually
               key={index}
               className="mb-0.5 aspect-square h-5 rounded-full"
             />
