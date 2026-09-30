@@ -7,5 +7,6 @@ export function toGamesParams(query: GameQuery): GamesParams {
     ...(query.genre && { genres: query.genre.id.toString() }),
     ...(query.platform && { parent_platforms: query.platform.id.toString() }),
     ...(query.ordering && { ordering: query.ordering }),
+    ...(query.search && { search: query.search }),
   }
 }

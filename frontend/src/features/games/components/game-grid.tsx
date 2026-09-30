@@ -20,7 +20,7 @@ function GameGrid({ gameQuery }: { gameQuery: GameQuery }) {
 
   if (games.length === 0) {
     return (
-      <div className="grid h-full place-content-center">
+      <div className="grid h-full">
         <p className="text-muted-foreground">No games found.</p>
       </div>
     )
