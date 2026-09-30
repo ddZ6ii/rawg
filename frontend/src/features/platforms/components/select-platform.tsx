@@ -5,6 +5,8 @@ import type { Platform } from '@rawg/shared'
 
 import { createPlatformsQueryOptions } from '@/features/platforms/services'
 import {
+  Field,
+  FieldLabel,
   Select,
   SelectContent,
   SelectGroup,
@@ -35,13 +37,13 @@ const SelectPlatform = memo(function SelectPlatform({
   }
 
   return (
-    <div className="flex flex-col items-start gap-0.5">
-      <label
+    <Field className="w-fit gap-0.5">
+      <FieldLabel
         htmlFor={triggerId}
         className="text-muted-foreground text-xs whitespace-nowrap"
       >
-        Platform:
-      </label>
+        Platform
+      </FieldLabel>
 
       <Select
         value={
@@ -83,7 +85,7 @@ const SelectPlatform = memo(function SelectPlatform({
           </SelectGroup>
         </SelectContent>
       </Select>
-    </div>
+    </Field>
   )
 })
 
@@ -91,25 +93,25 @@ function SelectPlatformSkeleton() {
   const triggerId = useId()
 
   return (
-    <div className="flex flex-col items-start gap-0.5">
-      <label
+    <Field className="w-fit gap-0.5">
+      <FieldLabel
         htmlFor={triggerId}
         className="text-muted-foreground text-xs whitespace-nowrap"
       >
-        Platform:
-      </label>
+        Platform
+      </FieldLabel>
       <Select defaultValue="Loading platforms..." disabled>
         <SelectTrigger
           id={triggerId}
           className="min-w-48 justify-between px-2 md:w-fit md:px-3 [&>svg:last-of-type]:hidden md:[&>svg:last-of-type]:block"
         >
           <div className="flex items-center gap-2">
-            <SelectValue className="hidden md:block">Loading...</SelectValue>
             <Spinner className="size-4" />
+            <SelectValue className="hidden md:block">Loading...</SelectValue>
           </div>
         </SelectTrigger>
       </Select>
-    </div>
+    </Field>
   )
 }
 

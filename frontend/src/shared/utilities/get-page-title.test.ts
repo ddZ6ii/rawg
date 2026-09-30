@@ -22,4 +22,16 @@ describe('getPageTitle', () => {
   it('combines genre and platform when both are selected', () => {
     expect(getPageTitle(genre.name, 'PC')).toBe('Action for PC')
   })
+
+  it('appends the search term when only search is set', () => {
+    expect(getPageTitle(undefined, undefined, 'zelda')).toBe(
+      'All Games matching "zelda"',
+    )
+  })
+
+  it('appends the search term to genre and platform', () => {
+    expect(getPageTitle(genre.name, 'PC', 'zelda')).toBe(
+      'Action for PC matching "zelda"',
+    )
+  })
 })

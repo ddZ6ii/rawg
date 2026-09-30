@@ -8,7 +8,12 @@ import { toGamesParams } from './to-games-params'
 const genre: Genre = { id: 4, name: 'Action', image_background: null }
 const platform: Platform = { id: 1, name: 'PC', slug: 'pc' }
 
-const emptyQuery: GameQuery = { genre: null, platform: null, ordering: null }
+const emptyQuery: GameQuery = {
+  genre: null,
+  platform: null,
+  search: null,
+  ordering: null,
+}
 
 describe('toGamesParams', () => {
   it('returns an empty object when no filters are set', () => {
@@ -31,10 +36,19 @@ describe('toGamesParams', () => {
     })
   })
 
+  it('maps search as-is', () => {
+    expect(toGamesParams({ ...emptyQuery, search: 'zelda' })).toEqual({
+      search: 'zelda',
+    })
+  })
+
   it('combines all filters when present', () => {
-    expect(toGamesParams({ genre, platform, ordering: 'name' })).toEqual({
+    expect(
+      toGamesParams({ genre, platform, search: 'zelda', ordering: 'name' }),
+    ).toEqual({
       genres: '4',
       parent_platforms: '1',
+      search: 'zelda',
       ordering: 'name',
     })
   })

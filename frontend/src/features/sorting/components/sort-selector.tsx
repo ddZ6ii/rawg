@@ -3,6 +3,8 @@ import { memo, useId } from 'react'
 import type { GamesSortOrders } from '@rawg/shared'
 
 import {
+  Field,
+  FieldLabel,
   Select,
   SelectContent,
   SelectGroup,
@@ -46,13 +48,13 @@ const SortSelector = memo(function SortSelector({
   const triggerId = useId()
 
   return (
-    <div className="flex flex-col items-start gap-0.5">
-      <label
+    <Field className="w-fit gap-0.5">
+      <FieldLabel
         htmlFor={triggerId}
         className="text-muted-foreground text-xs whitespace-nowrap"
       >
-        Order by:
-      </label>
+        Order by
+      </FieldLabel>
 
       <Select
         value={getOption(sortOrder).value}
@@ -84,7 +86,7 @@ const SortSelector = memo(function SortSelector({
           </SelectGroup>
         </SelectContent>
       </Select>
-    </div>
+    </Field>
   )
 })
 

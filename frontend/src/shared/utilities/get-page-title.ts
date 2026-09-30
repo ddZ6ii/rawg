@@ -2,7 +2,7 @@ import type { Genre, Platform } from '@rawg/shared'
 
 import { capitalize } from './capitalize'
 
-export function getPageTitle(
+function getFilterTitle(
   genreName: Genre['name'] | undefined,
   platformName: Platform['name'] | undefined,
 ) {
@@ -17,3 +17,14 @@ export function getPageTitle(
   }
   return 'All Games'
 }
+
+function getPageTitle(
+  genreName: Genre['name'] | undefined,
+  platformName: Platform['name'] | undefined,
+  search?: string | null,
+) {
+  const title = getFilterTitle(genreName, platformName)
+  return search ? `${title} matching "${search}"` : title
+}
+
+export { getPageTitle }

@@ -40,7 +40,12 @@ function renderGameGrid(gameQuery: GameQuery) {
   })
 }
 
-const emptyQuery: GameQuery = { genre: null, platform: null, ordering: null }
+const emptyQuery: GameQuery = {
+  genre: null,
+  platform: null,
+  search: null,
+  ordering: null,
+}
 
 describe('GameGrid', () => {
   it('renders a card for each game', async () => {
@@ -57,7 +62,7 @@ describe('GameGrid', () => {
     expect(await screen.findByText('No games found.')).toBeInTheDocument()
   })
 
-  it('omits genres, parent_platforms and ordering when none is selected', async () => {
+  it('omits all filters when none is selected', async () => {
     mockGames([portal2])
     renderGameGrid(emptyQuery)
 
@@ -95,13 +100,33 @@ describe('GameGrid', () => {
     })
   })
 
-  it('passes genres, parent_platforms and ordering when all are selected', async () => {
+  it('passes search when a search term is set', async () => {
     mockGames([portal2])
-    renderGameGrid({ genre: action, platform: pc, ordering: 'name' })
+    renderGameGrid({ ...emptyQuery, search: 'portal' })
 
     await screen.findByText('Portal 2')
     expect(createGamesQueryOptions).toHaveBeenCalledWith({
-      options: { genres: '1', parent_platforms: '1', ordering: 'name' },
+      options: { search: 'portal' },
+    })
+  })
+
+  it('passes all filters when all are selected', async () => {
+    mockGames([portal2])
+    renderGameGrid({
+      genre: action,
+      platform: pc,
+      search: 'portal',
+      ordering: 'name',
+    })
+
+    await screen.findByText('Portal 2')
+    expect(createGamesQueryOptions).toHaveBeenCalledWith({
+      options: {
+        genres: '1',
+        parent_platforms: '1',
+        search: 'portal',
+        ordering: 'name',
+      },
     })
   })
 })

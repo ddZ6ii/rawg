@@ -29,9 +29,21 @@ const GameSchema = z.object({
 
 const GamesSortOrdersSchema = z.literal(GAMES_SORT_ORDERS_WITH_DIRECTION)
 
+const GAMES_SEARCH_MAX_LENGTH = 100
+
+const GamesSearchSchema = z
+  .string()
+  .check(
+    z.maxLength(
+      GAMES_SEARCH_MAX_LENGTH,
+      `Search must be ${String(GAMES_SEARCH_MAX_LENGTH)} characters or fewer`,
+    ),
+  )
+
 const GamesParamsSchema = z.object({
   genres: z.optional(z.string()),
   parent_platforms: z.optional(z.string()),
+  search: z.optional(GamesSearchSchema),
   ordering: z.optional(GamesSortOrdersSchema),
 })
 
@@ -41,7 +53,9 @@ type GamesPaginatedResponse = PaginatedResponse<typeof GameSchema>
 type GamesParams = z.infer<typeof GamesParamsSchema>
 
 export {
+  GAMES_SEARCH_MAX_LENGTH,
   GAMES_SORT_ORDERS,
+  GamesSearchSchema,
   GamesSortOrdersSchema,
   GamesParamsSchema,
   GameSchema,

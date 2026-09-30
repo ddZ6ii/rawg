@@ -1,7 +1,9 @@
 export { InvalidInputError } from './errors/invalid-input.error.js'
 
 export {
+  GAMES_SEARCH_MAX_LENGTH,
   GAMES_SORT_ORDERS,
+  GamesSearchSchema,
   GamesSortOrdersSchema,
   GamesParamsSchema,
   GameSchema,
