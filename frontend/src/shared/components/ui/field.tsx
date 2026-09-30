@@ -210,6 +210,7 @@ function FieldError({
       <ul className="ml-4 flex list-disc flex-col gap-1">
         {uniqueErrors.map(
           (error, index) =>
+            // eslint-disable-next-line react-x/no-array-index-key -- stateless text-only <li>s, list recomputed wholesale; no state/DOM identity to preserve
             error?.message && <li key={index}>{error.message}</li>,
         )}
       </ul>
