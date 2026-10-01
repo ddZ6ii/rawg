@@ -1,0 +1,5 @@
+export { GamesFilters } from './games-filters'
+export { GamesHeading } from './games-heading'
+export { GamesResults } from './games-results'
+export { GenresPanel } from './genres-panel'
+export { NavBar } from './navbar'

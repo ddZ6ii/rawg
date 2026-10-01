@@ -34,16 +34,24 @@ function useGameQuery() {
     }))
   }, [])
 
+  // Setters return `prev` when nothing changes, so re-selecting the current
+  // value doesn't produce a new query (no transition, no scroll to top)
   const selectPlatform = useCallback((platform: Platform | null) => {
-    setGameQuery((prev) => ({ ...prev, platform }))
+    setGameQuery((prev) =>
+      platform?.id === prev.platform?.id ? prev : { ...prev, platform },
+    )
   }, [])
 
   const selectSortOrder = useCallback((ordering: GamesSortOrders | null) => {
-    setGameQuery((prev) => ({ ...prev, ordering }))
+    setGameQuery((prev) =>
+      ordering === prev.ordering ? prev : { ...prev, ordering },
+    )
   }, [])
 
   const setSearch = useCallback((search: string | null) => {
-    setGameQuery((prev) => ({ ...prev, search }))
+    setGameQuery((prev) =>
+      search === prev.search ? prev : { ...prev, search },
+    )
   }, [])
 
   return {

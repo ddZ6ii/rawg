@@ -6,7 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 import './index.css'
 
-import { App } from '@/app.tsx'
+import { App } from '@/app'
 import {
   isRetryableError,
   RootErrorFallback,
