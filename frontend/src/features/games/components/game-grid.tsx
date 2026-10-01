@@ -1,9 +1,16 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { GameCard, GameCardSkeleton } from './game-card'
+import type { GamesPaginatedResponse } from '@rawg/shared'
+
 import { createGamesQueryOptions } from '@/features/games/services'
 import type { GameQuery } from '@/features/games/types'
 import { toGamesParams } from '@/features/games/utilities'
+
+import { GameCard, GameCardSkeleton } from './game-card'
+
+function selectGames(response: GamesPaginatedResponse) {
+  return response.results
+}
 
 function GameGridContainer({ children }: React.PropsWithChildren) {
   return (
@@ -16,7 +23,12 @@ function GameGridContainer({ children }: React.PropsWithChildren) {
 function GameGrid({ gameQuery }: { gameQuery: GameQuery }) {
   const options = toGamesParams(gameQuery)
 
-  const { data: games } = useSuspenseQuery(createGamesQueryOptions({ options }))
+  const { data: games } = useSuspenseQuery(
+    createGamesQueryOptions({
+      options,
+      select: selectGames,
+    }),
+  )
 
   if (games.length === 0) {
     return (

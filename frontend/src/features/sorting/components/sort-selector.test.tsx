@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type { GamesSortOrders } from '@rawg/shared'
 
-import { RenderWithProvider } from '@/tests/utilities/render-with-provider'
+import { RenderWithProvider } from '@/tests/utilities'
 
 import { SortSelector } from './sort-selector'
 

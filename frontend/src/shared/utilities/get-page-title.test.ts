@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import type { Genre } from '@rawg/shared'
+import { createGenre } from '@/tests/utilities'
 
 import { getPageTitle } from './get-page-title'
 
-const genre: Genre = { id: 1, name: 'action', image_background: null }
+const genre = createGenre({ id: 1, name: 'action' })
 
 describe('getPageTitle', () => {
   it('returns default title when nothing is selected', () => {

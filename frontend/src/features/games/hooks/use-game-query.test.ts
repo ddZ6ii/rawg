@@ -1,13 +1,13 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import type { Genre, Platform } from '@rawg/shared'
+import { createGenre, createPlatform } from '@/tests/utilities'
 
 import { useGameQuery } from './use-game-query'
 
-const action: Genre = { id: 4, name: 'Action', image_background: null }
-const rpg: Genre = { id: 5, name: 'RPG', image_background: null }
-const pc: Platform = { id: 1, name: 'PC', slug: 'pc' }
+const action = createGenre({ id: 4, name: 'Action' })
+const rpg = createGenre({ id: 5, name: 'RPG' })
+const pc = createPlatform({ id: 1, name: 'PC', slug: 'pc' })
 
 describe('useGameQuery', () => {
   it('starts with an empty query', () => {

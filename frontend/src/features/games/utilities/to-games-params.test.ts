@@ -1,43 +1,40 @@
 import { describe, expect, it } from 'vitest'
 
-import type { Genre, Platform } from '@rawg/shared'
+import { EMPTY_GAME_QUERY } from '@/features/games/hooks'
+import { createGenre, createPlatform } from '@/tests/utilities'
 
-import type { GameQuery } from '@/features/games/types'
 import { toGamesParams } from './to-games-params'
 
-const genre: Genre = { id: 4, name: 'Action', image_background: null }
-const platform: Platform = { id: 1, name: 'PC', slug: 'pc' }
-
-const emptyQuery: GameQuery = {
-  genre: null,
-  platform: null,
-  search: null,
-  ordering: null,
-}
+const genre = createGenre({ id: 4, name: 'Action' })
+const platform = createPlatform({ id: 1, name: 'PC', slug: 'pc' })
 
 describe('toGamesParams', () => {
   it('returns an empty object when no filters are set', () => {
-    expect(toGamesParams(emptyQuery)).toEqual({})
+    expect(toGamesParams(EMPTY_GAME_QUERY)).toEqual({})
   })
 
   it('maps genre to genres', () => {
-    expect(toGamesParams({ ...emptyQuery, genre })).toEqual({ genres: '4' })
+    expect(toGamesParams({ ...EMPTY_GAME_QUERY, genre })).toEqual({
+      genres: '4',
+    })
   })
 
   it('maps platform to parent_platforms', () => {
-    expect(toGamesParams({ ...emptyQuery, platform })).toEqual({
+    expect(toGamesParams({ ...EMPTY_GAME_QUERY, platform })).toEqual({
       parent_platforms: '1',
     })
   })
 
   it('maps ordering as-is', () => {
-    expect(toGamesParams({ ...emptyQuery, ordering: '-released' })).toEqual({
+    expect(
+      toGamesParams({ ...EMPTY_GAME_QUERY, ordering: '-released' }),
+    ).toEqual({
       ordering: '-released',
     })
   })
 
   it('maps search as-is', () => {
-    expect(toGamesParams({ ...emptyQuery, search: 'zelda' })).toEqual({
+    expect(toGamesParams({ ...EMPTY_GAME_QUERY, search: 'zelda' })).toEqual({
       search: 'zelda',
     })
   })

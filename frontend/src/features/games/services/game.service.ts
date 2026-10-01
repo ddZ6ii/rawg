@@ -4,7 +4,7 @@ import {
   GameSchema,
   GamesParamsSchema,
   InvalidInputError,
-  type Game,
+  type GamesPaginatedResponse,
   type GamesParams,
 } from '@rawg/shared'
 
@@ -17,12 +17,17 @@ const GAME_KEYS = {
 
 const gameService = createHttpService('/games')
 
-function createGamesQueryOptions<TData = Game[]>({
+/**
+ * Unlike other services, `select` receives the full paginated response (not
+ * just `results`) so consumers can read `count`. Components sharing the same
+ * `options` share one cached request, each selecting its own slice.
+ */
+function createGamesQueryOptions<TData = GamesPaginatedResponse>({
   options = {},
   select,
 }: {
   options?: GamesParams
-  select?: (games: Game[]) => TData
+  select?: (response: GamesPaginatedResponse) => TData
 } = {}) {
   const parsedOptions = GamesParamsSchema.safeParse(options)
   if (!parsedOptions.success) {
@@ -40,8 +45,7 @@ function createGamesQueryOptions<TData = Game[]>({
         ? [...GAME_KEYS.all, params]
         : GAME_KEYS.all,
     queryFn: ({ signal }) => gameService.getAll(GameSchema, signal, params),
-    select: (response) =>
-      (select ? select(response.results) : response.results) as TData,
+    select: (response) => (select ? select(response) : response) as TData,
   })
 }
 

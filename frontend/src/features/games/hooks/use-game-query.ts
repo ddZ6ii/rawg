@@ -4,12 +4,12 @@ import type { GamesSortOrders, Genre, Platform } from '@rawg/shared'
 
 import type { GameQuery } from '@/features/games/types'
 
-const EMPTY_GAME_QUERY: GameQuery = {
+const EMPTY_GAME_QUERY: Readonly<GameQuery> = Object.freeze({
   genre: null,
   platform: null,
   search: null,
   ordering: null,
-}
+})
 
 /**
  * Owns the games filter state (genre, platform, search, ordering).
@@ -23,7 +23,7 @@ const EMPTY_GAME_QUERY: GameQuery = {
  * - Stable setters for each filter. Selecting the current genre again clears
  *   it.
  */
-export function useGameQuery() {
+function useGameQuery() {
   const [gameQuery, setGameQuery] = useState<GameQuery>(EMPTY_GAME_QUERY)
   const deferredGameQuery = useDeferredValue(gameQuery)
 
@@ -56,3 +56,5 @@ export function useGameQuery() {
     setSearch,
   }
 }
+
+export { EMPTY_GAME_QUERY, useGameQuery }

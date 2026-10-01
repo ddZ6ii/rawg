@@ -1,4 +1,10 @@
-import { GameGrid, GameGridSkeleton, useGameQuery } from '@/features/games'
+import {
+  GameGrid,
+  GameGridSkeleton,
+  GamesResultsCount,
+  GamesResultsSkeleton,
+  useGameQuery,
+} from '@/features/games'
 import { GenreList, GenreListSkeleton } from '@/features/genres'
 import { SelectPlatform, SelectPlatformSkeleton } from '@/features/platforms'
 import { SearchInput } from '@/features/search'
@@ -13,6 +19,8 @@ import {
   useIsMobile,
   WidgetErrorFallback,
 } from '@/shared'
+
+const renderNothing = () => null
 
 export function App() {
   const isMobile = useIsMobile()
@@ -89,11 +97,34 @@ export function App() {
           </div>
         )}
 
-        <TruncatedTooltip tooltip={title}>
-          <h1 className="min-w-0 truncate text-xl font-semibold lg:text-2xl">
-            {title}
-          </h1>
-        </TruncatedTooltip>
+        <div className="flex flex-wrap items-end justify-between gap-1">
+          <TruncatedTooltip tooltip={title}>
+            <h1 className="min-w-0 truncate text-xl font-semibold lg:text-2xl">
+              {title}
+            </h1>
+          </TruncatedTooltip>
+
+          {/* Live region stays mounted so screen readers announce updates */}
+          <div
+            role="status"
+            aria-atomic="true"
+            className="text-muted-foreground ml-auto text-sm"
+          >
+            <SuspenseQueryBoundary
+              fallback={renderNothing}
+              loadingFallback={<GamesResultsSkeleton />}
+              // Each boundary has its own error state: without this, a failed
+              // request leaves the count blank until reload, as the grid's
+              // "retry" only resets the grid. Changing a filter clears the
+              // error and refetches.
+              // ⚠️ Known limitation: a retry on the grid doesn't restore the
+              // count; it reappears on the next filter change.
+              resetKeys={[deferredGameQuery]}
+            >
+              <GamesResultsCount gameQuery={deferredGameQuery} />
+            </SuspenseQueryBoundary>
+          </div>
+        </div>
 
         <div
           aria-busy={isPending}
@@ -111,6 +142,8 @@ export function App() {
               />
             )}
             loadingFallback={<GameGridSkeleton />}
+            // Changing a filter after an error retries without a manual "retry"
+            resetKeys={[deferredGameQuery]}
           >
             <GameGrid gameQuery={deferredGameQuery} />
           </SuspenseQueryBoundary>

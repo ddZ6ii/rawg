@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { Platform } from '@rawg/shared'
 
 import { createPlatformsQueryOptions } from '@/features/platforms/services'
-import { RenderWithProvider } from '@/tests/utilities/render-with-provider'
+import { createPlatform, RenderWithProvider } from '@/tests/utilities'
 
 import { SelectPlatform } from './select-platform'
 
@@ -14,12 +14,12 @@ vi.mock('@/features/platforms/services', () => ({
   createPlatformsQueryOptions: vi.fn(),
 }))
 
-const pc: Platform = { id: 1, name: 'PC', slug: 'pc' }
-const playstation: Platform = {
+const pc = createPlatform({ id: 1, name: 'PC', slug: 'pc' })
+const playstation = createPlatform({
   id: 2,
   name: 'PlayStation',
   slug: 'playstation',
-}
+})
 
 function mockPlatforms(platforms: Platform[]) {
   vi.mocked(createPlatformsQueryOptions).mockReturnValue(

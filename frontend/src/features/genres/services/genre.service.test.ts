@@ -1,11 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  GenreSchema,
-  InvalidInputError,
-  type Genre,
-  type PaginatedResponse,
-} from '@rawg/shared'
+import { InvalidInputError } from '@rawg/shared'
+
+import { createGenre, toPaginatedResponse } from '@/tests/utilities'
 
 import { createGenresQueryOptions } from './genre.service'
 
@@ -15,17 +12,12 @@ vi.mock('@/shared/services', () => ({
   createHttpService: () => ({ getAll: getAllMock }),
 }))
 
-const genres: Genre[] = [
-  { id: 1, name: 'Action', image_background: null },
-  { id: 2, name: 'Indie', image_background: null },
+const genres = [
+  createGenre({ id: 1, name: 'Action' }),
+  createGenre({ id: 2, name: 'Indie' }),
 ]
 
-const paginatedResponse: PaginatedResponse<typeof GenreSchema> = {
-  count: genres.length,
-  next: null,
-  previous: null,
-  results: genres,
-}
+const paginatedResponse = toPaginatedResponse(genres)
 
 describe('createGenresQueryOptions', () => {
   it('builds a queryKey without params when none are provided', () => {

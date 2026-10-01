@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { GAMES_SEARCH_MAX_LENGTH } from '@rawg/shared'
 
-import { RenderWithProvider } from '@/tests/utilities/render-with-provider'
+import { RenderWithProvider } from '@/tests/utilities'
 
 import { REMAINING_CHARS_THRESHOLD } from '../utilities'
 import { DEBOUNCE_DELAY_MS, SearchInput } from './search-input'

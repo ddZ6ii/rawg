@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { Genre } from '@rawg/shared'
 
 import { createGenresQueryOptions } from '@/features/genres/services'
-import { RenderWithProvider } from '@/tests/utilities/render-with-provider'
+import { createGenre, RenderWithProvider } from '@/tests/utilities'
 
 import { GenreList, GenreListSkeleton } from './genre-list'
 
@@ -14,8 +14,8 @@ vi.mock('@/features/genres/services', () => ({
   createGenresQueryOptions: vi.fn(),
 }))
 
-const action: Genre = { id: 1, name: 'Action', image_background: null }
-const indie: Genre = { id: 2, name: 'Indie', image_background: null }
+const action = createGenre({ id: 1, name: 'Action' })
+const indie = createGenre({ id: 2, name: 'Indie' })
 
 function mockGenres(genres: Genre[]) {
   vi.mocked(createGenresQueryOptions).mockReturnValue(

@@ -2,17 +2,17 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { Genre } from '@rawg/shared'
+import { createGenre } from '@/tests/utilities'
 
 import { GenreItem, GenreItemSkeleton } from './genre-item'
 
-const action: Genre = {
+const action = createGenre({
   id: 1,
   name: 'Action',
   image_background: 'https://example.com/action.jpg',
-}
+})
 
-const indie: Genre = { id: 2, name: 'Indie', image_background: null }
+const indie = createGenre({ id: 2, name: 'Indie' })
 
 describe('GenreItem', () => {
   it('renders the genre name and image when image_background is set', () => {
