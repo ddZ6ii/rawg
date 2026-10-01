@@ -1,4 +1,5 @@
 export { useDebouncedCallback } from './use-debounced-callback'
 export { useIsMobile } from './use-is-mobile'
 export { useIsTruncated } from './use-is-truncated'
+export { useScrollToTopOnChange } from './use-scroll-to-top-on-change'
 export { useTheme } from './use-theme'

@@ -121,6 +121,25 @@ describe('useGameQuery', () => {
     })
   })
 
+  it('keeps the same query when a setter repeats the current value', () => {
+    const { result } = renderHook(() => useGameQuery())
+
+    act(() => {
+      result.current.selectPlatform(pc)
+      result.current.selectSortOrder('name')
+      result.current.setSearch('zelda')
+    })
+    const before = result.current.gameQuery
+
+    act(() => {
+      result.current.selectPlatform({ ...pc })
+      result.current.selectSortOrder('name')
+      result.current.setSearch('zelda')
+    })
+
+    expect(result.current.gameQuery).toBe(before)
+  })
+
   it('returns stable setters across renders', () => {
     const { result } = renderHook(() => useGameQuery())
     const first = result.current
