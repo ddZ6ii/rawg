@@ -1,5 +1,6 @@
 export { capitalize } from './capitalize'
 export { debounce } from './debounce'
+export { formatNumber } from './format-number'
 export { getCroppedImage } from './get-cropped-image'
 export { getErrorMessage, isRetryableError } from './error'
 export { getPageTitle } from './get-page-title'

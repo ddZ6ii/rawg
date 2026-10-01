@@ -1,11 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  InvalidInputError,
-  PlatformSchema,
-  type PaginatedResponse,
-  type Platform,
-} from '@rawg/shared'
+import { InvalidInputError } from '@rawg/shared'
+
+import { createPlatform, toPaginatedResponse } from '@/tests/utilities'
 
 import { createPlatformsQueryOptions } from './platform.service'
 
@@ -15,17 +12,12 @@ vi.mock('@/shared/services', () => ({
   createHttpService: () => ({ getAll: getAllMock }),
 }))
 
-const platforms: Platform[] = [
-  { id: 1, name: 'PC', slug: 'pc' },
-  { id: 2, name: 'PlayStation', slug: 'playstation' },
+const platforms = [
+  createPlatform({ id: 1, name: 'PC', slug: 'pc' }),
+  createPlatform({ id: 2, name: 'PlayStation', slug: 'playstation' }),
 ]
 
-const paginatedResponse: PaginatedResponse<typeof PlatformSchema> = {
-  count: platforms.length,
-  next: null,
-  previous: null,
-  results: platforms,
-}
+const paginatedResponse = toPaginatedResponse(platforms)
 
 describe('createPlatformsQueryOptions', () => {
   it('builds a queryKey without params when none are provided', () => {

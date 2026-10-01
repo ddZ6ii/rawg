@@ -2,19 +2,21 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
-import type { Platform } from '@rawg/shared'
-
-import { RenderWithProvider } from '@/tests/utilities/render-with-provider'
+import { createPlatform, RenderWithProvider } from '@/tests/utilities'
 
 import { PlatformIconList } from './platform-icon-list'
 
-const pc: Platform = { id: 1, name: 'PC', slug: 'pc' }
-const playstation: Platform = {
+const pc = createPlatform({ id: 1, name: 'PC', slug: 'pc' })
+const playstation = createPlatform({
   id: 2,
   name: 'PlayStation',
   slug: 'playstation',
-}
-const unknown: Platform = { id: 3, name: 'Commodore 64', slug: 'commodore-64' }
+})
+const unknown = createPlatform({
+  id: 3,
+  name: 'Commodore 64',
+  slug: 'commodore-64',
+})
 
 describe('PlatformIconList', () => {
   it('renders an icon for each known platform', () => {

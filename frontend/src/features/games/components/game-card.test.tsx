@@ -3,27 +3,22 @@ import { describe, expect, it } from 'vitest'
 
 import type { Game } from '@rawg/shared'
 
-import { RenderWithProvider } from '@/tests/utilities/render-with-provider'
+import {
+  createGame,
+  createPlatform,
+  RenderWithProvider,
+} from '@/tests/utilities'
 
 import { GameCard, GameCardSkeleton } from './game-card'
 
-const pc = { id: 1, name: 'PC', slug: 'pc' }
-
-const portal2: Game = {
-  id: 1,
+const noThumbnail = createGame({ id: 2, name: 'Unknown Game' })
+const pc = createPlatform({ id: 1, name: 'PC', slug: 'pc' })
+const portal2 = createGame({
   name: 'Portal 2',
   background_image: 'https://example.com/portal2.jpg',
   metacritic: 95,
   parent_platforms: [{ platform: pc }],
-}
-
-const noThumbnail: Game = {
-  id: 2,
-  name: 'Unknown Game',
-  background_image: null,
-  metacritic: null,
-  parent_platforms: null,
-}
+})
 
 function renderGameCard(game: Game) {
   return render(<GameCard game={game} />, { wrapper: RenderWithProvider })

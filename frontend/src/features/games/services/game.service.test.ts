@@ -1,11 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  GameSchema,
-  InvalidInputError,
-  type Game,
-  type PaginatedResponse,
-} from '@rawg/shared'
+import { InvalidInputError } from '@rawg/shared'
+
+import { createGame, toPaginatedResponse } from '@/tests/utilities'
 
 import { createGamesQueryOptions } from './game.service'
 
@@ -15,29 +12,12 @@ vi.mock('@/shared/services', () => ({
   createHttpService: () => ({ getAll: getAllMock }),
 }))
 
-const games: Game[] = [
-  {
-    id: 1,
-    name: 'Portal 2',
-    background_image: null,
-    metacritic: 95,
-    parent_platforms: null,
-  },
-  {
-    id: 2,
-    name: 'Hades',
-    background_image: null,
-    metacritic: 93,
-    parent_platforms: null,
-  },
+const games = [
+  createGame({ id: 1, name: 'Portal 2' }),
+  createGame({ id: 2, name: 'Hades' }),
 ]
 
-const paginatedResponse: PaginatedResponse<typeof GameSchema> = {
-  count: games.length,
-  next: null,
-  previous: null,
-  results: games,
-}
+const paginatedResponse = toPaginatedResponse(games)
 
 describe('createGamesQueryOptions', () => {
   it('builds a queryKey without params when none are provided', () => {
@@ -60,14 +40,14 @@ describe('createGamesQueryOptions', () => {
     ).toThrow(InvalidInputError)
   })
 
-  it('extracts results via select by default', () => {
+  it('returns the full response by default', () => {
     const options = createGamesQueryOptions()
-    expect(options.select?.(paginatedResponse)).toEqual(games)
+    expect(options.select?.(paginatedResponse)).toEqual(paginatedResponse)
   })
 
   it('applies a custom select function', () => {
     const options = createGamesQueryOptions({
-      select: (result) => result.length,
+      select: (response) => response.results.length,
     })
     expect(options.select?.(paginatedResponse)).toBe(games.length)
   })
