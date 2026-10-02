@@ -65,6 +65,18 @@ describe('GameCard', () => {
 
     expect(screen.queryByTestId('critic-score')).not.toBeInTheDocument()
   })
+
+  it('renders the rating pill when rating_top is set', () => {
+    renderGameCard(createGame({ rating_top: 5 }))
+
+    expect(screen.getByText('Exceptional')).toBeInTheDocument()
+  })
+
+  it('renders no rating pill when rating_top is null', () => {
+    renderGameCard(noThumbnail)
+
+    expect(screen.queryByText('Exceptional')).not.toBeInTheDocument()
+  })
 })
 
 describe('GameCardSkeleton', () => {
