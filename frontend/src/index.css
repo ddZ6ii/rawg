@@ -101,6 +101,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-switch-thumb: var(--switch-thumb);
+  --color-switch-thumb-foreground: var(--switch-thumb-foreground);
+  --color-switch-track-on: var(--switch-track-on);
+  --color-switch-track-off: var(--switch-track-off);
 }
 
 :root {
@@ -140,6 +144,10 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --switch-thumb: oklch(1 0 0);
+  --switch-thumb-foreground: oklch(0.205 0 0);
+  --switch-track-on: oklch(0.55 0.13 153.745);
+  --switch-track-off: oklch(0.6 0 0);
 }
 
 .dark {
@@ -178,6 +186,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --switch-track-on: oklch(0.62 0.13 153.745);
 }
 
 @layer base {

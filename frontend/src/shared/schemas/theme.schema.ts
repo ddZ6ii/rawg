@@ -1,9 +1,9 @@
 import * as z from 'zod/mini'
 
-const THEMES = ['dark', 'light', 'system'] as const
+const THEMES = ['dark', 'light'] as const
 
-const ThemeSchema = z._default(z.enum(THEMES), 'system')
+const ThemeSchema = z.enum(THEMES)
 
 type Theme = z.infer<typeof ThemeSchema>
 
-export { ThemeSchema, THEMES, type Theme }
+export { ThemeSchema, type Theme }

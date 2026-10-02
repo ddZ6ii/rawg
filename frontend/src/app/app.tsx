@@ -1,5 +1,5 @@
 import { useGameQuery } from '@/features/games'
-import { useIsMobile, useScrollToTopOnChange } from '@/shared'
+import { ThemeToggle, useIsMobile, useScrollToTopOnChange } from '@/shared'
 
 import {
   AppBody,
@@ -14,6 +14,7 @@ import {
   GamesHeading,
   GamesResults,
   GenresPanel,
+  NavBar,
 } from './components'
 
 export function App() {
@@ -35,7 +36,10 @@ export function App() {
 
   return (
     <AppLayout>
-      <AppHeader />
+      <AppHeader>
+        <NavBar />
+        <ThemeToggle />
+      </AppHeader>
 
       <AppBody>
         {!isMobile && (
