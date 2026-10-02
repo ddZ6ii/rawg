@@ -5,6 +5,7 @@ import { getSavedPreferences } from './get-saved-preferences'
 describe('getSavedPreferences', () => {
   afterEach(() => {
     localStorage.clear()
+    vi.restoreAllMocks()
   })
 
   it('returns null when key is not set', () => {
@@ -16,9 +17,9 @@ describe('getSavedPreferences', () => {
     expect(getSavedPreferences('prefs')).toEqual({ theme: 'dark' })
   })
 
-  it('defaults theme to "system" when missing from stored object', () => {
+  it('returns no theme when missing from stored object', () => {
     localStorage.setItem('prefs', JSON.stringify({}))
-    expect(getSavedPreferences('prefs')).toEqual({ theme: 'system' })
+    expect(getSavedPreferences('prefs')).toEqual({})
   })
 
   it('returns null when stored theme is invalid', () => {
@@ -37,14 +38,10 @@ describe('getSavedPreferences', () => {
   })
 
   it('returns null when localStorage.getItem throws', () => {
-    const getItemSpy = vi
-      .spyOn(Storage.prototype, 'getItem')
-      .mockImplementation(() => {
-        throw new Error('access denied')
-      })
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('access denied')
+    })
 
-    expect(() => getSavedPreferences('prefs')).toThrow('access denied')
-
-    getItemSpy.mockRestore()
+    expect(getSavedPreferences('prefs')).toBeNull()
   })
 })

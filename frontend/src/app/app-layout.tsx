@@ -1,6 +1,4 @@
-import { cn, SelectTheme } from '@/shared'
-
-import { NavBar } from './components'
+import { cn } from '@/shared'
 
 // Layout tokens: every sticky offset and gutter below derives from these
 const LAYOUT_VARS =
@@ -19,14 +17,12 @@ function AppLayout({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-/**
- * Sticky top bar with the logo and theme selector; place inside `AppLayout`.
- * Renders its own content, so it takes no children.
- */
+/** Sticky top bar; place inside `AppLayout`. */
 function AppHeader({
   className,
+  children,
   ...props
-}: Omit<React.ComponentProps<'header'>, 'children'>) {
+}: React.ComponentProps<'header'>) {
   return (
     <header
       className={cn(
@@ -36,8 +32,7 @@ function AppHeader({
       {...props}
     >
       <div className="container mx-auto flex h-full items-center justify-between gap-3 px-(--gutter)">
-        <NavBar />
-        <SelectTheme />
+        {children}
       </div>
     </header>
   )

@@ -1,23 +1,16 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { ThemeContextProvider } from '@/shared'
-import { RenderWithProvider } from '@/tests/utilities'
-
 import { AppHeader, AppToolbar } from './app-layout'
 
 describe('AppHeader', () => {
-  it('renders the navigation and the theme selector', () => {
+  it('renders its children inside a banner', () => {
     render(
-      <ThemeContextProvider>
-        <AppHeader />
-      </ThemeContextProvider>,
-      { wrapper: RenderWithProvider },
+      <AppHeader>
+        <span>content</span>
+      </AppHeader>,
     )
-
-    expect(screen.getByRole('banner')).toBeInTheDocument()
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByRole('combobox')).toBeInTheDocument()
+    expect(screen.getByRole('banner')).toHaveTextContent('content')
   })
 })
 

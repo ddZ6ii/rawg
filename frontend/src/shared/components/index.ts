@@ -1,6 +1,6 @@
 export { RootErrorFallback } from './root-error-fallback'
-export { SelectTheme } from './select-theme'
 export { SuspenseQueryBoundary } from './suspense-query-boundary'
+export { ThemeToggle } from './theme-toggle'
 export { TruncatedTooltip } from './truncated-tooltip'
 export * from './ui'
 export { WidgetErrorFallback } from './widget-error-fallback'

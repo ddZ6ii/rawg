@@ -3,7 +3,7 @@ import * as z from 'zod/mini'
 import { ThemeSchema } from './theme.schema'
 
 const StorageSchema = z.object({
-  theme: ThemeSchema,
+  theme: z.optional(ThemeSchema),
 })
 
 type StorageSchemaType = z.infer<typeof StorageSchema>
