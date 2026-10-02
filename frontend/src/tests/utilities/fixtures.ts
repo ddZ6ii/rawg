@@ -10,6 +10,7 @@ function createGame(overrides: Partial<Game> = {}): Game {
     background_image: null,
     metacritic: null,
     parent_platforms: null,
+    rating_top: null,
     ...overrides,
   }
 }

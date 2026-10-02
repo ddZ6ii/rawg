@@ -25,6 +25,7 @@ const GameSchema = z.object({
   ),
   metacritic: z.nullable(z.number()),
   parent_platforms: z.nullable(z.array(z.object({ platform: PlatformSchema }))),
+  rating_top: z.nullish(z.number()),
 })
 
 const GamesSortOrdersSchema = z.literal(GAMES_SORT_ORDERS_WITH_DIRECTION)

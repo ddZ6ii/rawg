@@ -14,7 +14,7 @@ function selectGames(response: GamesPaginatedResponse) {
 
 function GameGridContainer({ children }: React.PropsWithChildren) {
   return (
-    <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(350px,100%),1fr))] gap-2 md:gap-4">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(350px,100%),1fr))] gap-2 md:gap-6">
       {children}
     </ul>
   )

@@ -12,6 +12,7 @@ import {
 import noImagePlaceholder from '@/assets/no-image-placeholder.webp'
 
 import { CriticScore } from './critic-score'
+import { GameRating } from './game-rating'
 import { PlatformIconList } from './platform-icon-list'
 
 function GameCardContainer({ children }: React.PropsWithChildren) {
@@ -35,7 +36,7 @@ function GameCard({ game }: { game: Game }) {
 
   return (
     <GameCardContainer>
-      <div className="aspect-video w-full overflow-hidden">
+      <div className="relative aspect-video w-full overflow-hidden">
         <img
           src={thumbnailUrl}
           alt={thumbnailAltText}
@@ -43,6 +44,10 @@ function GameCard({ game }: { game: Game }) {
           height={360}
           className="size-full object-cover transition-transform hover:scale-105"
           onError={handleImageError}
+        />
+        <GameRating
+          rating={game.rating_top}
+          className="absolute top-2 right-2"
         />
       </div>
 
